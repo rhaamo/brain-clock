@@ -22,7 +22,7 @@
       <b-form @submit="saveTask">
         <b-row>
           <b-col cols="8">
-            <textarea v-model="task.taskDescription" name="taskText" id="taskText" cols="35" rows="3" placeholder="OwO ?"></textarea>
+            <textarea v-model="taskDescription" name="taskText" id="taskText" cols="35" rows="3" placeholder="OwO ?"></textarea>
           </b-col>
 
           <b-col cols="4" align="center">
@@ -66,6 +66,11 @@ export default {
     },
     saveTask (event) {
       event.preventDefault()
+      let res = window.ipcRenderer.sendSync('updateTask', {taskId: this.task.id, start: this.task.started, end: this.task.ended, duration: this.task.duration, title: this.taskDescription})
+      if (res === true) {
+        this.task.title = this.taskDescription
+        this.edit = false
+      }
     }
   }
 }

@@ -190,3 +190,14 @@ ipcMain.on('deleteTask', (event, taskId) => {
 ipcMain.on('openAboutLink', (_) => {
   shell.openExternal('https://dev.sigpipe.me/dashie/brainclock')
 })
+
+ipcMain.on('updateTask', (event, {taskId, start, end, duration, title}) => {
+  knex('tasks').update({
+    started: start,
+    ended: end,
+    duration: duration,
+    title: title
+  }).where({id: taskId}).then(function (result) {
+    event.returnValue = result === 1
+  })
+})
