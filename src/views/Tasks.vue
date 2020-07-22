@@ -1,5 +1,5 @@
 <template>
-  <div class="tasks">
+  <div class="tasks"> 
     <TaskItem v-for="task in tasks" :key="task.id" :task="task"   />
   </div>
 </template>
@@ -20,7 +20,7 @@ export default {
     console.log(this.tasks)
 
     // A task has been removed
-    window.ipcRenderer.on('taskRemoved', (_, taskId) => {
+    window.ipcRenderer.on('taskRemoved', (_, {taskId}) => {
       for (var i = 0; i < this.tasks.length; i++) {
         if (this.tasks[i].id === taskId) {
           this.tasks.splice(i, 1)
@@ -31,7 +31,6 @@ export default {
 
     // A task has been added
     window.ipcRenderer.on('taskAdded', (_, taskObject) => {
-      console.log(taskObject)
       this.tasks.unshift(taskObject)
     });
   }
