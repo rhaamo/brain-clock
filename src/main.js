@@ -8,6 +8,7 @@ Vue.config.productionTip = false
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'fork-awesome/scss/fork-awesome.scss'
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)

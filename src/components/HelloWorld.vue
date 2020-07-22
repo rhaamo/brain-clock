@@ -4,7 +4,7 @@
 
     <b-alert show>Default Alert</b-alert>
 
-    <b-alert variant="success" show>Success Alert</b-alert>
+    <b-alert variant="success" show><i class="fa fa-archlinux" aria-hidden="true"></i> owo</b-alert>
 
     <div>
       <b-tabs content-class="mt-3">
