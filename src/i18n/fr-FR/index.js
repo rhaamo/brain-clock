@@ -21,7 +21,11 @@ export default {
     tasks: {
         noDescription: "Cette tâche n'a pas de déscription.",
         to: 'to',
-        removeThisTask: 'Supprimer cette tâche.'
+        removeThisTask: 'Supprimer là tâche.',
+        editThisTask: 'Éditer là tâche.',
+        form: {
+            update: 'mise à jour'
+        }
     },
     about: {
         description: 'BrainClock est développé par dashie.',

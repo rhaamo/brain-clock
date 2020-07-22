@@ -21,7 +21,11 @@ export default {
     tasks: {
         noDescription: 'This task has no description.',
         to: 'to',
-        removeThisTask: 'Remove this task.'
+        removeThisTask: 'Remove task.',
+        editThisTask: 'Edit task.',
+        form: {
+            update: 'update'
+        }
     },
     about: {
         description: 'BrainClock is developped by dashie.',
