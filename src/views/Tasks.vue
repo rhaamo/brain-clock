@@ -18,6 +18,16 @@ export default {
   mounted () {
     this.tasks = window.ipcRenderer.sendSync('getAllTasks')
     console.log(this.tasks)
+
+    // A task has been removed
+    window.ipcRenderer.on('taskRemoved', (_, taskId) => {
+      for (var i = 0; i < this.tasks.length; i++) {
+        if (this.tasks[i].id === taskId) {
+          this.tasks.splice(i, 1)
+          i--
+        }
+      }
+    });
   }
 }
 </script>

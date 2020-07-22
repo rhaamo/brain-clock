@@ -162,3 +162,12 @@ ipcMain.on('setPreference', (event, key, value) => {
 ipcMain.on('getAllTasks', (event) => {
   knex.select('id', 'started', 'ended', 'duration', 'title').orderBy('started', 'desc').from('tasks').then(rows => event.returnValue = rows)
 })
+
+ipcMain.on('deleteTask', (event, taskId) => {
+  knex.where('id', taskId).from('tasks').delete().then(function (result) {
+    // returns the number of rows impacted
+    if (result === 1) {
+      win.webContents.send("taskRemoved", taskId)
+    }
+  })
+})

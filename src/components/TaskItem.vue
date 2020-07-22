@@ -6,11 +6,11 @@
     <b-row>
       <b-col class="taskTitle">
         <blockquote class="blockquote font-weight-light">
-          {{ task.title }}
+          {{ task.title || 'No task description.' }}
         </blockquote>
       </b-col>
       <b-col class="taskActions text-right" cols="2">
-        <b-button variant="outline-danger" size="sm"><i class="fa fa-remove" aria-hidden="true"></i></b-button>
+        <b-button v-on:click="deleteTask(task.id)" variant="outline-danger" size="sm"><i class="fa fa-remove" aria-hidden="true"></i></b-button>
       </b-col>
     </b-row>
   </div>
@@ -36,6 +36,9 @@ export default {
     momentDuration: function (seconds) {
       return moment.duration(seconds, 'seconds').locale('fr').humanize(false, { s: 60, m: 60, h: 24 }); // be more precise
     },
+    deleteTask: function (taskId) {
+      window.ipcRenderer.send('deleteTask', taskId)
+    }
   }
 }
 </script>
