@@ -1,10 +1,18 @@
 <template>
   <div class="taskItem" :data-task-id="task.id">
     <div class="taskTimes">
-      <span class="taskSpent">{{ taskDuration }}</span> - <span class="taskStarted">{{ taskStartedAt }}</span> to <span class="taskEnded">{{ taskEndedAt }}</span>
+      <span class="taskSpent">{{ taskDuration }}</span> <span class="taskSpan pull-right">{{ taskStartedAt }} to {{ taskEndedAt }}</span>
     </div>
-    <div class="taskTitle">{{ task.title }}</div>
-    <div class="taskActions"><i class="fa fa-remove"></i></div>
+    <b-row>
+      <b-col class="taskTitle">
+        <blockquote class="blockquote font-weight-light">
+          {{ task.title }}
+        </blockquote>
+      </b-col>
+      <b-col class="taskActions text-right" cols="2">
+        <b-button variant="outline-danger" size="sm"><i class="fa fa-remove" aria-hidden="true"></i></b-button>
+      </b-col>
+    </b-row>
   </div>
 </template>
 
