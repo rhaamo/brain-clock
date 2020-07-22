@@ -26,7 +26,7 @@
           </b-col>
 
           <b-col cols="4" align="center">
-            <b-button type="submit" variant="primary">{{ $t("tasks.form.update") }}</b-button>
+            <b-button size="sm" type="submit" variant="primary">{{ $t("tasks.form.update") }}</b-button>
           </b-col>
         </b-row>
       </b-form>
