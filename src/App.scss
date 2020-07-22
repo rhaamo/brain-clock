@@ -10,10 +10,27 @@ header#appHeader {
     padding-top: 5px;
     background-color: #d7ecfa;
     color: #0a0a0a;
+    display: flex;
 }
 
 textarea#taskText {
     resize: none;
+}
+
+div#ahTaskText {
+    flex-basis: 160px;  
+    padding-left: 5px;
+}
+
+div#ahTimes {
+    flex-basis: auto;
+    flex-grow: 4;
+    padding-left: 5px;
+}
+
+div#ahBtns {
+    flex-basis: 2em;
+    padding-right: 5px;
 }
 
 /* Nav */

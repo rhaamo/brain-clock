@@ -1,20 +1,18 @@
 <template>
   <div id="app">
     <header id="appHeader">
-      <b-container fluid>
-        <b-row>
-          <b-col cols="4">
-            <textarea v-model="taskText" name="taskText" id="taskText" cols="20" rows="3" placeholder="OwO ?"></textarea>
-          </b-col>
-          <b-col cols="auto">
-            {{ $t("header.started") }} <span id="timerStartDate">{{taskStartedAt}}</span><br />
-            {{ $t("header.spent") }} <span id="timerSpentTime">{{taskTimeSpent}}</span>
-          </b-col>
-          <b-col align="right">
-            <b-button v-on:click="toggleTimer" variant="primary" id="btTimer"><i :class="timer.icon" aria-hidden="true"></i></b-button>
-          </b-col>
-        </b-row>
-      </b-container>
+        <div id="ahTaskText">
+          <textarea v-model="taskText" name="taskText" id="taskText" cols="20" rows="3" placeholder="OwO ?"></textarea>
+        </div>
+
+        <div id="ahTimes">
+          {{ $t("header.started") }} <span id="timerStartDate">{{taskStartedAt}}</span><br />
+          {{ $t("header.spent") }} <span id="timerSpentTime">{{taskTimeSpent}}</span>
+        </div>
+
+        <div id="ahBtns">
+          <b-button v-on:click="toggleTimer" variant="primary" id="btTimer"><i :class="timer.icon" aria-hidden="true"></i></b-button>
+        </div>
     </header>
 
     <div id="nav">
