@@ -93,6 +93,26 @@ if (isDevelopment) {
   }
 }
 
+/* Database handling */
+const databasePath = path.join(app.getPath('userData'), 'tasks.sqlite');
+let knex = require('knex')({
+  client: 'sqlite3',
+  connection: {
+    filename: databasePath,
+  },
+  useNullAsDefault: true
+})
+
+/* tasks table */
+knex.schema.createTableIfNotExists('tasks', function (table) {
+  table.increments('id')
+  table.timestamp('started')
+  table.timestamp('ended')
+  table.integer('duration') // seconds
+  table.text('title') // what the task was
+})
+  .then()
+
 /* MAIN APP CODE */
 
 let timerState = {
@@ -118,7 +138,12 @@ ipcMain.on('toggleTimer', (e, taskText ) => {
 
 function insertTaskAndNotify (start, end, text) {
   console.log("Task:", text, start, end);
-  // TODO: insert in BDD
+  knex.insert({ 
+    started: start,
+    ended: end,
+    duration: Math.floor((end - start) / 1000),
+    title: text
+   }).into('tasks').then()
   win.webContents.send("taskAdded", start, end, text);
 }
 
