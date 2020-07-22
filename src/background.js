@@ -142,13 +142,16 @@ ipcMain.on('toggleTimer', (e, taskText ) => {
 
 function insertTaskAndNotify (start, end, text) {
   console.log("Task:", text, start, end);
+  let duration = Math.floor((end - start) / 1000);
   knex.insert({ 
     started: start,
     ended: end,
-    duration: Math.floor((end - start) / 1000),
+    duration: duration,
     title: text
-   }).into('tasks').then()
-  win.webContents.send("taskAdded", start, end, text);
+   }).into('tasks').returning('id').then(function (result) {
+     let id = result[0];
+    win.webContents.send("taskAdded", {id: id, started: start, ended: end, duration: duration, title: text });
+   })
 }
 
 ipcMain.on('getPreference', (event, key) => {
@@ -167,7 +170,7 @@ ipcMain.on('deleteTask', (event, taskId) => {
   knex.where('id', taskId).from('tasks').delete().then(function (result) {
     // returns the number of rows impacted
     if (result === 1) {
-      win.webContents.send("taskRemoved", taskId)
+      win.webContents.send("taskRemoved", {taskId})
     }
   })
 })

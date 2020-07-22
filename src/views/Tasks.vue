@@ -28,6 +28,12 @@ export default {
         }
       }
     });
+
+    // A task has been added
+    window.ipcRenderer.on('taskAdded', (_, taskObject) => {
+      console.log(taskObject)
+      this.tasks.unshift(taskObject)
+    });
   }
 }
 </script>

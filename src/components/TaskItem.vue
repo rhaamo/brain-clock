@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import timeUtils from '../utils/time'
 
 export default {
   name: 'TaskItem',
@@ -25,17 +25,11 @@ export default {
     task: Object
   },
   computed: {
-    taskStartedAt() { return this.momentFormat(this.task.started) },
-    taskEndedAt() { return this.momentFormat(this.task.ended) },
-    taskDuration() { return this.momentDuration(this.task.duration) }
+    taskStartedAt() { return timeUtils.formatShort(this.task.started) },
+    taskEndedAt() { return timeUtils.formatShort(this.task.ended) },
+    taskDuration() { return timeUtils.secondsToDdHhMmSs(this.task.duration) }
   },
   methods: {
-    momentFormat: function (date) {
-      return moment(date).locale('fr').format('ddd D, HH:mm:ss')
-    },
-    momentDuration: function (seconds) {
-      return moment.duration(seconds, 'seconds').locale('fr').humanize(false, { s: 60, m: 60, h: 24 }); // be more precise
-    },
     deleteTask: function (taskId) {
       window.ipcRenderer.send('deleteTask', taskId)
     }
