@@ -104,12 +104,16 @@ let knex = require('knex')({
 })
 
 /* tasks table */
-knex.schema.createTableIfNotExists('tasks', function (table) {
-  table.increments('id')
-  table.timestamp('started')
-  table.timestamp('ended')
-  table.integer('duration') // seconds
-  table.text('title') // what the task was
+knex.schema.hasTable('tasks').then(function (exists) {
+  if (!exists) {
+    return knex.schema.createTableIfNotExists('tasks', function (table) {
+      table.increments('id')
+      table.timestamp('started')
+      table.timestamp('ended')
+      table.integer('duration') // seconds
+      table.text('title') // what the task was
+    })    
+  }
 })
   .then()
 
@@ -153,4 +157,8 @@ ipcMain.on('getPreference', (event, key) => {
 
 ipcMain.on('setPreference', (event, key, value) => {
   event.returnValue = win.set(key, value);
+})
+
+ipcMain.on('getAllTasks', (event) => {
+  knex.select('id', 'started', 'ended', 'duration', 'title').from('tasks').then(rows => event.returnValue = rows)
 })

@@ -1,17 +1,23 @@
 <template>
   <div class="tasks">
-    tasks list here uwu
+    <TaskItem v-for="task in tasks" :key="task.id" :task="task"   />
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-//import HelloWorld from '@/components/HelloWorld.vue'
+import TaskItem from '@/components/TaskItem.vue'
 
 export default {
   name: 'Home',
+  data: () => ({
+    tasks: []
+  }),
   components: {
-//    HelloWorld
+    TaskItem
+},
+  mounted () {
+    this.tasks = window.ipcRenderer.sendSync('getAllTasks')
+    console.log(this.tasks)
   }
 }
 </script>
