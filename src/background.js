@@ -1,10 +1,22 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, shell } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import ElectronStore from 'electron-store'
+
 const path = require('path')
 const isDevelopment = process.env.NODE_ENV !== 'production'
+
+const preferencesSchema = {
+  locale: {
+    type: 'string'
+  }
+}
+const preferencesStore = new ElectronStore({
+  preferencesSchema,
+  name: 'settings'
+});
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -154,12 +166,12 @@ function insertTaskAndNotify (start, end, text) {
    })
 }
 
-ipcMain.on('getPreference', (event, key) => {
-  event.returnValue = win.get(key);
+ipcMain.on('getPreference', (event, {key}) => {
+  event.returnValue = preferencesStore.get(key);
 })
 
-ipcMain.on('setPreference', (event, key, value) => {
-  event.returnValue = win.set(key, value);
+ipcMain.on('setPreference', (event, {key, value}) => {
+  event.returnValue = preferencesStore.set(key, value);
 })
 
 ipcMain.on('getAllTasks', (event) => {
@@ -173,4 +185,8 @@ ipcMain.on('deleteTask', (event, taskId) => {
       win.webContents.send("taskRemoved", {taskId})
     }
   })
+})
+
+ipcMain.on('openAboutLink', (_) => {
+  shell.openExternal('https://dev.sigpipe.me/dashie/brainclock')
 })

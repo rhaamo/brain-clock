@@ -1,5 +1,23 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+
+      <b-row align-h="center" class="text-center">
+        <b-col cols="8">
+          {{ $t('about.description') }}<br/><br/>
+          <a href="#" @click="openAboutPage">{{ $t('about.sources') }}</a>
+        </b-col>
+      </b-row>
+
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    openAboutPage: function (event) {
+      event.preventDefault()
+      window.ipcRenderer.send('openAboutLink')
+    }
+  }
+}
+</script>

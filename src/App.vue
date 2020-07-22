@@ -7,8 +7,8 @@
             <textarea v-model="taskText" name="taskText" id="taskText" cols="20" rows="3" placeholder="OwO ?"></textarea>
           </b-col>
           <b-col>
-            Started: <span id="timerStartDate">{{taskStartedAt}}</span><br />
-            Spent: <span id="timerSpentTime">{{taskTimeSpent}}</span>
+            {{ $t("header.started") }} <span id="timerStartDate">{{taskStartedAt}}</span><br />
+            {{ $t("header.spent") }} <span id="timerSpentTime">{{taskTimeSpent}}</span>
           </b-col>
           <b-col cols="2">
             <b-button v-on:click="toggleTimer" variant="primary" id="btTimer"><i :class="timer.icon" aria-hidden="true"></i></b-button>
@@ -19,9 +19,9 @@
 
     <div id="nav">
       <b-nav tabs justified>
-        <b-nav-item :active='$route.name =="home"' :to="{ name: 'home' }">Tasks</b-nav-item>
-        <b-nav-item :active='$route.name =="settings"' :to="{ name: 'settings' }">Settings</b-nav-item>
-        <b-nav-item :active='$route.name =="about"' :to="{ name: 'about' }">About</b-nav-item>
+        <b-nav-item :active='$route.name =="home"' :to="{ name: 'home' }">{{ $t("nav.tasks") }}</b-nav-item>
+        <b-nav-item :active='$route.name =="settings"' :to="{ name: 'settings' }">{{ $t("nav.settings") }}</b-nav-item>
+        <b-nav-item :active='$route.name =="about"' :to="{ name: 'about' }">{{ $t("nav.about") }}</b-nav-item>
       </b-nav>
     </div>
 
@@ -43,11 +43,14 @@ export default {
       spent: null,
       icon: 'fa fa-play'
     },
-    timerInterval: null
+    timerInterval: null,
+    preferences: {
+      locale: 'en-US'
+    }
   }),
   computed: {
-    taskStartedAt() { return this.timer.startedAt === null ? 'Not yet.' : timeUtils.formatShort(this.timer.startedAt) },
-    taskTimeSpent() { return this.timer.spent === null ? '0ns.' : timeUtils.secondsToDdHhMmSs(this.timer.spent) }
+    taskStartedAt() { return this.timer.startedAt === null ? this.$t("header.time.notYet") : timeUtils.formatShort(this.timer.startedAt, this.$i18n.locale) },
+    taskTimeSpent() { return this.timer.spent === null ? this.$t("header.time.oNs") : timeUtils.secondsToDdHhMmSs(this.timer.spent, this.$i18n.locale) }
   },
   methods: {
     toggleTimer: function () {
@@ -81,6 +84,9 @@ export default {
       this.taskText = ''
       clearInterval(this.timerInterval)
     });
+
+    // Get various preferences
+    this.$root.$i18n.locale = this.preferences.locale = window.ipcRenderer.sendSync('getPreference', {key: 'locale'})
   },
 
 }
