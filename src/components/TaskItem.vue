@@ -62,7 +62,9 @@ export default {
     toggleEdit: function () {
       if (this.edit === false) {
         this.edit = true
-      } // TODO handle closing it, like if text has been changed
+      } else {
+        this.edit = false
+      }
     },
     saveTask (event) {
       event.preventDefault()
