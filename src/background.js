@@ -160,5 +160,5 @@ ipcMain.on('setPreference', (event, key, value) => {
 })
 
 ipcMain.on('getAllTasks', (event) => {
-  knex.select('id', 'started', 'ended', 'duration', 'title').from('tasks').then(rows => event.returnValue = rows)
+  knex.select('id', 'started', 'ended', 'duration', 'title').orderBy('started', 'desc').from('tasks').then(rows => event.returnValue = rows)
 })
