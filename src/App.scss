@@ -1,0 +1,17 @@
+/* App Style */
+
+body {
+    width: 500px;
+}
+
+/* TOP Bar [task management] */
+
+header#appHeader {
+    padding-top: 5px;
+    background-color: #d7ecfa;
+    color: #0a0a0a;
+}
+
+textarea#taskText {
+    resize: none;
+}

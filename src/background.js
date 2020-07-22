@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -17,8 +17,11 @@ protocol.registerSchemesAsPrivileged([
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: isDevelopment ? 500 + 600 : 500,
+    height: 800,
+    title: 'BrainClock',
+    resizable: false,
+    backgroundColor: 'white',
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -87,3 +90,38 @@ if (isDevelopment) {
     })
   }
 }
+
+/* MAIN APP CODE */
+
+let timerState = {
+  ticking: false,
+  start: null,
+  end: null
+}
+
+ipcMain.on('toggleTimer', (e, { taskText }) => {
+  if (timerState.ticking === false) {
+    timerState.ticking = true
+    timerState.start = Date.now()
+    win.webContents.send("timerStarted", timerState.start)
+  } else {
+    timerState.end = Date.now()
+    insertTaskAndNotify(timerState.start, timerState.end, taskText);
+    timerState.ticking = false
+    win.webContents.send("timerStopped", timerState.start, timerState.end)
+  }
+})
+
+function insertTaskAndNotify (start, end, text) {
+  console.log("Task:", text, start, end);
+  // TODO: insert in BDD
+  win.webContents.send("taskAdded", start, end, text);
+}
+
+ipcMain.on('getPreference', (event, key) => {
+  event.returnValue = win.get(key);
+})
+
+ipcMain.on('setPreference', (event, key, value) => {
+  event.returnValue = win.set(key, value);
+})

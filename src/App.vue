@@ -1,32 +1,32 @@
 <template>
   <div id="app">
+    <header id="appHeader">
+      <b-container fluid>
+        <b-row>
+          <b-col cols="4">
+            <textarea name="taskText" id="taskText" cols="20" rows="3" placeholder="OwO ?"></textarea>
+          </b-col>
+          <b-col>
+            Started: <span id="timerStartDate">not yet.</span><br />
+            Spent: <span id="timerSpentTime">0ns.</span>
+          </b-col>
+          <b-col cols="2">
+            <b-button variant="primary" id="btTimer"><i class="fa fa-play" aria-hidden="true"></i></b-button>
+          </b-col>
+        </b-row>
+      </b-container>
+    </header>
+
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <b-nav tabs justified>
+        <b-nav-item :active='$route.name =="home"' :to="{ name: 'home' }">Tasks</b-nav-item>
+        <b-nav-item :active='$route.name =="settings"' :to="{ name: 'settings' }">Settings</b-nav-item>
+        <b-nav-item :active='$route.name =="about"' :to="{ name: 'about' }">About</b-nav-item>
+      </b-nav>
     </div>
+
     <router-view/>
   </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+<style lang="scss" src="./App.scss"></style>
