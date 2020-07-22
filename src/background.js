@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+const path = require('path')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -25,7 +26,8 @@ function createWindow() {
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
+      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      preload: path.join(__dirname, 'preload.js')
     }
   })
 
@@ -99,15 +101,17 @@ let timerState = {
   end: null
 }
 
-ipcMain.on('toggleTimer', (e, { taskText }) => {
+ipcMain.on('toggleTimer', (e, taskText ) => {
   if (timerState.ticking === false) {
     timerState.ticking = true
     timerState.start = Date.now()
+    console.log('DEBUG: timer started');
     win.webContents.send("timerStarted", timerState.start)
   } else {
     timerState.end = Date.now()
     insertTaskAndNotify(timerState.start, timerState.end, taskText);
     timerState.ticking = false
+    console.log('DEBUG: timer stopped');
     win.webContents.send("timerStopped", timerState.start, timerState.end)
   }
 })

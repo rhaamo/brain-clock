@@ -4,14 +4,14 @@
       <b-container fluid>
         <b-row>
           <b-col cols="4">
-            <textarea name="taskText" id="taskText" cols="20" rows="3" placeholder="OwO ?"></textarea>
+            <textarea v-model="taskText" name="taskText" id="taskText" cols="20" rows="3" placeholder="OwO ?"></textarea>
           </b-col>
           <b-col>
-            Started: <span id="timerStartDate">not yet.</span><br />
-            Spent: <span id="timerSpentTime">0ns.</span>
+            Started: <span id="timerStartDate">{{taskStartedAt}}</span><br />
+            Spent: <span id="timerSpentTime">{{taskTimeSpent}}</span>
           </b-col>
           <b-col cols="2">
-            <b-button variant="primary" id="btTimer"><i class="fa fa-play" aria-hidden="true"></i></b-button>
+            <b-button v-on:click="toggleTimer" variant="primary" id="btTimer"><i :class="timer.icon" aria-hidden="true"></i></b-button>
           </b-col>
         </b-row>
       </b-container>
@@ -30,3 +30,63 @@
 </template>
 
 <style lang="scss" src="./App.scss"></style>
+
+<script>
+import moment from 'moment'
+
+export default {
+  data: () => ({
+    taskText: '',
+    timer: {
+      startedAt: null,
+      ticking: false,
+      spent: null,
+      icon: 'fa fa-play'
+    },
+    timerInterval: null
+  }),
+  computed: {
+    taskStartedAt() { return this.timer.startedAt === null ? 'Not yet.' : this.momentFormat(this.timer.startedAt) },
+    taskTimeSpent() { return this.timer.spent === null ? '0ns.' : this.momentDuration(this.timer.spent) }
+  },
+  methods: {
+    momentFormat: function (date) {
+      return moment(date).locale('fr').format('ddd D, HH:mm:ss')
+    },
+    momentDuration: function (seconds) {
+      return moment.duration(seconds, 'seconds').locale('fr').humanize(false, { s: 60, m: 60, h: 24 }); // be more precise
+    },
+    toggleTimer: function () {
+      window.ipcRenderer.send('toggleTimer', this.taskText || '');
+    },
+    startTimer: function () {
+      if (this.timer.ticking) {
+        let delta = Date.now() - this.timer.startedAt;
+        let seconds = Math.floor(delta / 1000);
+        this.timer.spent = seconds; // TODO: moment js duration
+      }
+    }
+  },
+  mounted () {
+    // timer started
+    window.ipcRenderer.on('timerStarted', (_, startDate) => {
+      console.log('started', startDate);
+      this.timer.icon = 'fa fa-stop';
+      this.timer.startedAt = startDate;
+      this.timer.ticking = true;
+      this.timerInterval = setInterval(this.startTimer, 1000);
+    });
+
+    // timer stopped
+    window.ipcRenderer.on('timerStopped', (_, startDate, endDate) => {
+      console.log('stopped', startDate, endDate);
+      this.timer.icon = 'fa fa-play';
+      this.timer.ticking = false;
+      this.timer.startedAt = null;
+      this.timer.spent = null;
+      clearInterval(this.timerInterval)
+    });
+  },
+
+}
+</script>
