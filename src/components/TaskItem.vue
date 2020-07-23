@@ -11,14 +11,14 @@
           </blockquote>
         </b-col>
         <b-col class="taskActions text-right" cols="3">
-          <b-button v-on:click="toggleEdit" :title="$t('tasks.editThisTask')" variant="outline-secondary" size="sm"><i class="fa fa-edit" aria-hidden="true"></i></b-button>
+          <b-button @click.prevent v-b-toggle="editId" :title="$t('tasks.editThisTask')" variant="outline-secondary" size="sm"><i class="fa fa-edit" aria-hidden="true"></i></b-button>
           &nbsp;
           <b-button v-on:click="deleteTask(task.id)" :title="$t('tasks.removeThisTask')" variant="outline-danger" size="sm"><i class="fa fa-remove" aria-hidden="true"></i></b-button>
         </b-col>
       </b-row>
     </div>
 
-    <div v-if="edit" class="taskEdit" :data-task-id="task.id">
+    <b-collapse class="taskEdit" :id="editId" :data-task-id="task.id">
       <b-form @submit="saveTask">
         <b-row>
           <b-col cols="8">
@@ -30,8 +30,7 @@
           </b-col>
         </b-row>
       </b-form>
-
-    </div>
+    </b-collapse>
   </div>
 </template>
 
@@ -41,7 +40,6 @@ import timeUtils from '../utils/time'
 export default {
   name: 'TaskItem',
   data: () => ({
-    edit: false,
     taskDescription: null
   }),
   props: {
@@ -50,7 +48,8 @@ export default {
   computed: {
     taskStartedAt() { return timeUtils.formatShort(this.task.started, this.$i18n.locale) },
     taskEndedAt() { return timeUtils.formatShort(this.task.ended, this.$i18n.locale) },
-    taskDuration() { return timeUtils.secondsToDdHhMmSs(this.task.duration, this.$i18n.locale) }
+    taskDuration() { return timeUtils.secondsToDdHhMmSs(this.task.duration, this.$i18n.locale) },
+    editId() { return `editTask${this.task.id}` }
   },
   mounted () {
     this.taskDescription = this.task.title
@@ -59,19 +58,11 @@ export default {
     deleteTask: function (taskId) {
       window.ipcRenderer.send('deleteTask', taskId)
     },
-    toggleEdit: function () {
-      if (this.edit === false) {
-        this.edit = true
-      } else {
-        this.edit = false
-      }
-    },
     saveTask (event) {
       event.preventDefault()
       let res = window.ipcRenderer.sendSync('updateTask', {taskId: this.task.id, start: this.task.started, end: this.task.ended, duration: this.task.duration, title: this.taskDescription})
       if (res === true) {
         this.task.title = this.taskDescription
-        this.edit = false
       }
     }
   }
