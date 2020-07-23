@@ -20,7 +20,7 @@ export default {
     },
     tasks: {
         noDescription: "Cette tâche n'a pas de déscription.",
-        to: 'to',
+        to: 'à',
         removeThisTask: 'Supprimer là tâche.',
         editThisTask: 'Éditer la tâche.',
         form: {
