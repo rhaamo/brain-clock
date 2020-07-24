@@ -2,7 +2,7 @@
   <div>
     <div class="taskItem" :data-task-id="task.id">
       <div class="taskTimes">
-        <span class="taskSpent">{{ taskDuration }}</span> <span class="taskSpan pull-right">{{ taskStartedAt }}</span>
+        <span class="taskSpent">{{ taskDuration }}</span> <span class="taskSpan pull-right">{{ taskDay }}, {{ taskFrom }} {{ $t('tasks.to') }} {{ taskTo }}</span>
       </div>
       <b-row>
         <b-col class="taskTitle">
@@ -46,7 +46,13 @@ export default {
     task: Object
   },
   computed: {
-    taskStartedAt() { return timeUtils.formatShort(this.task.started, this.$i18n.locale) },
+    taskDay() { return timeUtils.formatShort(this.task.started, this.$i18n.locale) },
+    taskFrom() { return timeUtils.formatShort(this.task.started, this.$i18n.locale, 'HH:mm:ss') },
+    taskTo() { 
+      let endDate = new Date(this.task.started)
+      endDate.setSeconds(endDate.getSeconds() + this.task.duration)
+      return timeUtils.formatShort(endDate, this.$i18n.locale, 'HH:mm:ss')
+      },
     taskDuration() { return timeUtils.secondsToDdHhMmSs(this.task.duration, this.$i18n.locale) },
     editId() { return `editTask${this.task.id}` }
   },
