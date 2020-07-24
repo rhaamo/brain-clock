@@ -11,8 +11,8 @@ const secondsToDdHhMmSs = (seconds, locale = 'en') => {
     return moment.duration(seconds, 'seconds').locale(extractLocale(locale)).format()
 }
 
-const formatShort = (date, locale = 'en') => {
-    return moment(date).locale(extractLocale(locale)).format('ddd D, HH:mm:ss')
+const formatShort = (date, locale = 'en', format = 'ddd D') => {
+    return moment(date).locale(extractLocale(locale)).format(format)
 }
 
 const timeUtils = {

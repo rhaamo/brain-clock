@@ -73,8 +73,8 @@ export default {
     });
 
     // timer stopped
-    window.ipcRenderer.on('timerStopped', (_, startDate, endDate) => {
-      console.log('stopped', startDate, endDate);
+    window.ipcRenderer.on('timerStopped', (_, startDate) => {
+      console.log('stopped', startDate);
       this.timer.icon = 'fa fa-play';
       this.timer.ticking = false;
       this.timer.startedAt = null;

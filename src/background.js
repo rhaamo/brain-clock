@@ -112,10 +112,16 @@ let knex = require('knex')({
   connection: {
     filename: databasePath,
   },
-  useNullAsDefault: true
+  useNullAsDefault: true,
+  migrations: {
+    directory: isDevelopment ? 'src/migrations/' : path.join(process.resourcesPath, 'src/migrations')
+  }
 })
 
-/* tasks table */
+knex.migrate.latest().then(function () {
+  console.log('database migrated.')
+})
+-/* tasks table */
 knex.schema.hasTable('tasks').then(function (exists) {
   if (!exists) {
     return knex.schema.createTableIfNotExists('tasks', function (table) {
@@ -127,7 +133,7 @@ knex.schema.hasTable('tasks').then(function (exists) {
     })    
   }
 })
-  .then()
+.then()
 
 /* MAIN APP CODE */
 
@@ -148,7 +154,7 @@ ipcMain.on('toggleTimer', (e, taskText ) => {
     insertTaskAndNotify(timerState.start, timerState.end, taskText);
     timerState.ticking = false
     console.log('DEBUG: timer stopped');
-    win.webContents.send("timerStopped", timerState.start, timerState.end)
+    win.webContents.send("timerStopped", timerState.start)
   }
 })
 
@@ -157,12 +163,11 @@ function insertTaskAndNotify (start, end, text) {
   let duration = Math.floor((end - start) / 1000);
   knex.insert({ 
     started: start,
-    ended: end,
     duration: duration,
     title: text
    }).into('tasks').returning('id').then(function (result) {
      let id = result[0];
-    win.webContents.send("taskAdded", {id: id, started: start, ended: end, duration: duration, title: text });
+    win.webContents.send("taskAdded", {id: id, started: start, duration: duration, title: text });
    })
 }
 
@@ -175,7 +180,7 @@ ipcMain.on('setPreference', (event, {key, value}) => {
 })
 
 ipcMain.on('getAllTasks', (event) => {
-  knex.select('id', 'started', 'ended', 'duration', 'title').orderBy('started', 'desc').from('tasks').then(rows => event.returnValue = rows)
+  knex.select('id', 'started', 'duration', 'title').orderBy('started', 'desc').from('tasks').then(rows => event.returnValue = rows)
 })
 
 ipcMain.on('deleteTask', (event, taskId) => {
@@ -194,7 +199,6 @@ ipcMain.on('openAboutLink', (_) => {
 ipcMain.on('updateTask', (event, {taskId, start, end, duration, title}) => {
   knex('tasks').update({
     started: start,
-    ended: end,
     duration: duration,
     title: title
   }).where({id: taskId}).then(function (result) {

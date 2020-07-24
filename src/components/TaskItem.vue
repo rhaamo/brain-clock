@@ -2,7 +2,7 @@
   <div>
     <div class="taskItem" :data-task-id="task.id">
       <div class="taskTimes">
-        <span class="taskSpent">{{ taskDuration }}</span> <span class="taskSpan pull-right">{{ taskStartedAt }} {{ $t('tasks.to') }} {{ taskEndedAt }}</span>
+        <span class="taskSpent">{{ taskDuration }}</span> <span class="taskSpan pull-right">{{ taskStartedAt }}</span>
       </div>
       <b-row>
         <b-col class="taskTitle">
@@ -47,7 +47,6 @@ export default {
   },
   computed: {
     taskStartedAt() { return timeUtils.formatShort(this.task.started, this.$i18n.locale) },
-    taskEndedAt() { return timeUtils.formatShort(this.task.ended, this.$i18n.locale) },
     taskDuration() { return timeUtils.secondsToDdHhMmSs(this.task.duration, this.$i18n.locale) },
     editId() { return `editTask${this.task.id}` }
   },
@@ -60,7 +59,7 @@ export default {
     },
     saveTask (event) {
       event.preventDefault()
-      let res = window.ipcRenderer.sendSync('updateTask', {taskId: this.task.id, start: this.task.started, end: this.task.ended, duration: this.task.duration, title: this.taskDescription})
+      let res = window.ipcRenderer.sendSync('updateTask', {taskId: this.task.id, start: this.task.started, duration: this.task.duration, title: this.taskDescription})
       if (res === true) {
         this.task.title = this.taskDescription
       }
