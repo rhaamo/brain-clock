@@ -11,7 +11,7 @@
             {{ $t("header.spent") }} <span id="timerSpentTime">{{taskTimeSpent}}</span>
           </div>
           <div id="ahTimes" v-else>
-            <b-form-datepicker id="manualTaskTime" size="sm" today-button :locale="$i18n.locale" value-as-date v-model="manual.day"></b-form-datepicker>
+            <b-form-datepicker id="manualTaskTime" size="sm" today-button :locale="$i18n.locale" value-as-date v-model="manual.day" start-weekday="1"></b-form-datepicker>
 
             <div class="row">
               <div class="col">
