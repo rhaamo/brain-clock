@@ -188,6 +188,10 @@ ipcMain.on('getAllTasks', (event) => {
   knex.select('id', 'started', 'duration', 'title').orderBy('started', 'desc').from('tasks').then(rows => event.returnValue = rows)
 })
 
+ipcMain.on('getTasksBetween', (event, {from, to}) => {
+  knex.select('id', 'started', 'duration', 'title').orderBy('started', 'desc').from('tasks').where('started', '>=', from).andWhere('started', '<=', to).then(rows => event.returnValue = rows)
+})
+
 ipcMain.on('deleteTask', (event, taskId) => {
   knex.where('id', taskId).from('tasks').delete().then(function (result) {
     // returns the number of rows impacted
