@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="fixed-top">
+    <div class="sticky-top">
       <header id="appHeader">
           <div id="ahTaskText">
             <textarea v-model="taskText" name="taskText" id="taskText" cols="20" rows="3" placeholder="OwO ?"></textarea>
