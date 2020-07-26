@@ -1,45 +1,51 @@
 <template>
   <div id="app">
-    <header id="appHeader">
-        <div id="ahTaskText">
-          <textarea v-model="taskText" name="taskText" id="taskText" cols="20" rows="3" placeholder="OwO ?"></textarea>
-        </div>
-
-        <div id="ahTimes" v-if="autoMode">
-          {{ $t("header.started") }} <span id="timerStartDate">{{taskStartedAt}}</span><br />
-          {{ $t("header.spent") }} <span id="timerSpentTime">{{taskTimeSpent}}</span>
-        </div>
-        <div id="ahTimes" v-else>
-          <b-form-datepicker id="manualTaskTime" size="sm" today-button :locale="$i18n.locale" value-as-date v-model="manual.day"></b-form-datepicker>
-
-          <div class="row">
-            <div class="col">
-              <b-form-timepicker id="manualTaskFrom" size="sm" :state="fromToState" :placeholder="$t('header.manual.from')" now-button :show-seconds="false" :hide-header="true" :hour12="false" :locale="$i18n.locale" v-model="manual.from"></b-form-timepicker>
-            </div>
-            <div class="col">
-              <b-form-timepicker id="manualTaskTo" size="sm" :state="fromToState" :placeholder="$t('header.manual.to')" :hour12="false" :show-seconds="false" :hide-header="true" :locale="$i18n.locale" v-model="manual.to"></b-form-timepicker>
-            </div>
+    <div class="fixed-top">
+      <header id="appHeader">
+          <div id="ahTaskText">
+            <textarea v-model="taskText" name="taskText" id="taskText" cols="20" rows="3" placeholder="OwO ?"></textarea>
           </div>
-          <br/>
-        </div>
 
-        <div id="ahBtns">
-          <b-button v-on:click="toggleTimer" variant="primary" id="btTimer" :title="$t('header.btn.save')" ><i :class="timer.icon" aria-hidden="true"></i></b-button>
-        </div>
-        <div id="ahBtnManual">
-          <b-button v-on:click="toggleManualTask" size="sm" variant="primary" id="btManualTask" :title="$t('header.btn.manual')" ><i class="fa fa-list-ul" aria-hidden="true"></i></b-button>
-        </div>
-    </header>
+          <div id="ahTimes" v-if="autoMode">
+            {{ $t("header.started") }} <span id="timerStartDate">{{taskStartedAt}}</span><br />
+            {{ $t("header.spent") }} <span id="timerSpentTime">{{taskTimeSpent}}</span>
+          </div>
+          <div id="ahTimes" v-else>
+            <b-form-datepicker id="manualTaskTime" size="sm" today-button :locale="$i18n.locale" value-as-date v-model="manual.day"></b-form-datepicker>
 
-    <div id="nav">
-      <b-nav tabs justified>
-        <b-nav-item :active='$route.name =="home"' :to="{ name: 'home' }">{{ $t("nav.tasks") }}</b-nav-item>
-        <b-nav-item :active='$route.name =="settings"' :to="{ name: 'settings' }">{{ $t("nav.settings") }}</b-nav-item>
-        <b-nav-item :active='$route.name =="about"' :to="{ name: 'about' }">{{ $t("nav.about") }}</b-nav-item>
-      </b-nav>
+            <div class="row">
+              <div class="col">
+                <b-form-timepicker id="manualTaskFrom" size="sm" :state="fromToState" :placeholder="$t('header.manual.from')" now-button :show-seconds="false" :hide-header="true" :hour12="false" :locale="$i18n.locale" v-model="manual.from"></b-form-timepicker>
+              </div>
+              <div class="col">
+                <b-form-timepicker id="manualTaskTo" size="sm" :state="fromToState" :placeholder="$t('header.manual.to')" :hour12="false" :show-seconds="false" :hide-header="true" :locale="$i18n.locale" v-model="manual.to"></b-form-timepicker>
+              </div>
+            </div>
+            <br/>
+          </div>
+
+          <div id="ahBtns">
+            <b-button v-on:click="toggleTimer" variant="primary" id="btTimer" :title="$t('header.btn.save')" ><i :class="timer.icon" aria-hidden="true"></i></b-button>
+          </div>
+          <div id="ahBtnManual">
+            <b-button v-on:click="toggleManualTask" size="sm" variant="primary" id="btManualTask" :title="$t('header.btn.manual')" ><i class="fa fa-list-ul" aria-hidden="true"></i></b-button>
+          </div>
+      </header>
+
+      <div id="nav">
+        <b-nav tabs justified>
+          <b-nav-item :active='$route.name =="home"' :to="{ name: 'home' }">{{ $t("nav.tasks") }}</b-nav-item>
+          <b-nav-item :active='$route.name =="settings"' :to="{ name: 'settings' }">{{ $t("nav.settings") }}</b-nav-item>
+          <b-nav-item :active='$route.name =="about"' :to="{ name: 'about' }">{{ $t("nav.about") }}</b-nav-item>
+        </b-nav>
+      </div>
     </div>
 
     <router-view/>
+
+    <div class="weekSelector fixed-bottom">
+      something something here
+    </div>
   </div>
 </template>
 

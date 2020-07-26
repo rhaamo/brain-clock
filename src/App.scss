@@ -41,6 +41,10 @@ div#nav {
 
 /* Tasks */
 
+div.tasks {
+    flex: 1;
+}
+
 div.taskItem {
     margin-top: 5px;
     padding: 5px;
@@ -72,4 +76,9 @@ div.settings {
 /* About */
 div.about {
     margin-top: 1em;
+}
+
+div.weekSelector {
+    height: 3em;
+    background-color: #d7ecfa;
 }
