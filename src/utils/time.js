@@ -11,7 +11,16 @@ const secondsToDdHhMmSs = (seconds, locale = 'en') => {
     return moment.duration(seconds, 'seconds').locale(extractLocale(locale)).format()
 }
 
+const secondsToHhMmSs = (seconds, locale = 'en') => {
+    return moment.duration(seconds, 'seconds').locale(extractLocale(locale)).format('hh:mm:ss')
+}
+
+
 const formatShort = (date, locale = 'en', format = 'ddd D') => {
+    return moment(date).locale(extractLocale(locale)).format(format)
+}
+
+const format = (date, locale = 'en', format = 'hh:mm:ss') => {
     return moment(date).locale(extractLocale(locale)).format(format)
 }
 
@@ -31,7 +40,9 @@ const timeUtils = {
     secondsToDdHhMmSs,
     formatShort,
     deltaHms,
-    fromSupTo
+    fromSupTo,
+    secondsToHhMmSs,
+    format
 }
 
 export default timeUtils
