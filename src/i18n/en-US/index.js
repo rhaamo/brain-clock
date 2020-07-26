@@ -11,6 +11,10 @@ export default {
         time: {
             notYet: 'Not yet.',
             oNs: '0ns.'
+        },
+        btn: {
+            save: 'Save task',
+            manual: 'Toggle manual mode'
         }
     },
     nav: {
