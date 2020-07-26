@@ -15,6 +15,10 @@ export default {
         btn: {
             save: 'Save task',
             manual: 'Toggle manual mode'
+        },
+        manual: {
+            from: 'de',
+            to: 'à'
         }
     },
     nav: {

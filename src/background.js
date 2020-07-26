@@ -158,6 +158,11 @@ ipcMain.on('toggleTimer', (e, taskText ) => {
   }
 })
 
+ipcMain.on('addManualTask', (e, {startDate, duration, text}) => {
+  let endDate = new Date(startDate.getTime()).setSeconds(startDate.getSeconds() + duration)
+  insertTaskAndNotify(startDate, endDate, text)
+})
+
 function insertTaskAndNotify (start, end, text) {
   console.log("Task:", text, start, end);
   let duration = Math.floor((end - start) / 1000);

@@ -14,10 +14,10 @@
 
           <div class="row">
             <div class="col">
-              <b-form-timepicker id="manualTaskFrom" size="sm" placeholder="from" now-button :show-seconds="false" :hide-header="true" :hour12="false" :locale="$i18n.locale" v-model="manual.from"></b-form-timepicker>
+              <b-form-timepicker id="manualTaskFrom" size="sm" :placeholder="$t('header.manual.from')" now-button :show-seconds="false" :hide-header="true" :hour12="false" :locale="$i18n.locale" v-model="manual.from"></b-form-timepicker>
             </div>
             <div class="col">
-              <b-form-timepicker id="manualTaskTo" size="sm" placeholder="to" :hour12="false" :show-seconds="false" :hide-header="true" :locale="$i18n.locale" v-model="manual.to"></b-form-timepicker>
+              <b-form-timepicker id="manualTaskTo" size="sm" :placeholder="$t('header.manual.to')" :hour12="false" :show-seconds="false" :hide-header="true" :locale="$i18n.locale" v-model="manual.to"></b-form-timepicker>
             </div>
           </div>
           <br/>
@@ -74,7 +74,23 @@ export default {
   },
   methods: {
     toggleTimer: function () {
-      window.ipcRenderer.send('toggleTimer', this.taskText || '');
+      if (!this.autoMode) {
+        let fromHours = this.manual.from.split(":")[0]
+        let fromMinutes = this.manual.from.split(":")[1]
+
+        let startDate = this.manual.day
+        startDate.setHours(fromHours)
+        startDate.setMinutes(fromMinutes)
+        startDate.setSeconds(0)
+
+        let duration = timeUtils.deltaHms(this.manual.from, this.manual.to)
+        window.ipcRenderer.send('addManualTask', {startDate: startDate, duration: duration, text: this.taskText})
+
+        // reset task text
+        this.taskText = ''
+      } else {
+        window.ipcRenderer.send('toggleTimer', this.taskText || '')
+      }
     },
     startTimer: function () {
       if (this.timer.ticking) {
