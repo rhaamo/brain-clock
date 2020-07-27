@@ -11,9 +11,9 @@
           </blockquote>
         </b-col>
         <b-col class="taskActions text-right" cols="3">
-          <b-button @click.prevent v-b-toggle="editId" :title="$t('tasks.editThisTask')" variant="outline-secondary" size="sm"><i class="fa fa-edit" aria-hidden="true"></i></b-button>
+          <b-button @click.prevent v-b-toggle="editId" v-b-tooltip.hover :title="$t('tasks.editThisTask')" variant="outline-secondary" size="sm"><i class="fa fa-edit" aria-hidden="true"></i></b-button>
           &nbsp;
-          <b-button v-on:click="deleteTask(task.id)" :title="$t('tasks.removeThisTask')" variant="outline-danger" size="sm"><i class="fa fa-remove" aria-hidden="true"></i></b-button>
+          <b-button v-on:click="deleteTask(task.id)" v-b-tooltip.hover :title="$t('tasks.removeThisTask')" variant="outline-danger" size="sm"><i class="fa fa-remove" aria-hidden="true"></i></b-button>
         </b-col>
       </b-row>
     </div>

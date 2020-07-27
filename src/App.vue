@@ -25,10 +25,10 @@
           </div>
 
           <div id="ahBtns">
-            <b-button v-on:click="toggleTimer" variant="primary" id="btTimer" :title="$t('header.btn.save')" ><i :class="timer.icon" aria-hidden="true"></i></b-button>
+            <b-button v-on:click="toggleTimer" variant="primary" id="btTimer" v-b-tooltip.hover :title="$t('header.btn.save')" ><i :class="timer.icon" aria-hidden="true"></i></b-button>
           </div>
           <div id="ahBtnManual">
-            <b-button v-on:click="toggleManualTask" size="sm" variant="primary" id="btManualTask" :title="$t('header.btn.manual')" ><i class="fa fa-list-ul" aria-hidden="true"></i></b-button>
+            <b-button v-on:click="toggleManualTask" size="sm" variant="primary" id="btManualTask" v-b-tooltip.hover :title="$t('header.btn.manual')" ><i class="fa fa-list-ul" aria-hidden="true"></i></b-button>
           </div>
       </header>
 
@@ -43,9 +43,17 @@
 
     <router-view/>
 
-    <div class="weekSelector fixed-bottom">
-      something something here
-    </div>
+    <b-row class="weekSelector fixed-bottom" align-v="baseline">
+      <b-col col lg="1" align="right">
+        <b-button pill variant="outline-secondary" v-b-tooltip.hover :title="$t('footer.prevWeek')" v-on:click="selectPrevWeek">-</b-button>
+      </b-col>
+      <b-col cols="5" md="auto" align="center">
+        <b-form-datepicker v-b-tooltip.hover :title="$t('footer.chooseWeek')" id="manualTaskTime" size="sm" button-only today-button :locale="$i18n.locale" value-as-date v-model="filter.selected" start-weekday="1"></b-form-datepicker>&nbsp;{{ weekSelectedText }}
+      </b-col>
+      <b-col col lg="1" align="left">
+        <b-button pill variant="outline-secondary" v-b-tooltip.hover :title="$t('footer.nextWeek')" v-on:click="selectNextWeek">+</b-button>
+      </b-col>
+    </b-row>
   </div>
 </template>
 
@@ -53,6 +61,7 @@
 
 <script>
 import timeUtils from './utils/time'
+import moment from 'moment'
 
 export default {
   data: () => ({
@@ -72,12 +81,21 @@ export default {
       day: null,
       from: null,
       to: null
+    },
+    filter: {
+      selected: null
     }
   }),
   computed: {
     taskStartedAt() { return this.timer.startedAt === null ? this.$t("header.time.notYet") : timeUtils.formatShort(this.timer.startedAt, this.$i18n.locale) },
     taskTimeSpent() { return this.timer.spent === null ? this.$t("header.time.oNs") : timeUtils.secondsToDdHhMmSs(this.timer.spent, this.$i18n.locale) },
-    fromToState() { return timeUtils.fromSupTo(this.manual.from, this.manual.to) ? false : null }
+    fromToState() { return timeUtils.fromSupTo(this.manual.from, this.manual.to) ? false : null },
+    weekSelectedText() {
+      let day = moment(this.filter.selected)
+      let start = day.startOf('isoWeek').locale(this.$i18n.locale).format('DD/MM')
+      let end = day.endOf('isoWeek').locale(this.$i18n.locale).format('DD/MM')
+      return `${start} - ${end}`
+      }
   },
   methods: {
     toggleTimer: function () {
@@ -124,6 +142,14 @@ export default {
           this.timer.icon = "fa fa-play"
         }
       }
+    },
+    selectPrevWeek: function () {
+      let selected = moment(this.filter.selected)
+      this.filter.selected = selected.subtract(7, 'days').toDate()
+    },
+    selectNextWeek: function () {
+      let selected = moment(this.filter.selected)
+      this.filter.selected = selected.add(7, 'days').toDate()
     }
   },
   mounted () {
@@ -149,6 +175,8 @@ export default {
 
     // Get various preferences
     this.$root.$i18n.locale = this.preferences.locale = window.ipcRenderer.sendSync('getPreference', {key: 'locale'})
+
+    this.filter.selected = new Date()
   },
 
 }

@@ -21,6 +21,11 @@ export default {
             to: 'to'
         }
     },
+    footer: {
+        prevWeek: 'previous week',
+        chooseWeek: 'change displayed week',
+        nextWeek: 'next week'
+    },
     nav: {
         tasks: 'Tasks',
         settings: 'Settings',
