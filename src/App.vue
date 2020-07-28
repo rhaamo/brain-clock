@@ -178,6 +178,11 @@ export default {
 
     this.filter.selected = new Date()
   },
-
+  watch: {
+    // Commit to the store when the selected week change
+    'filter.selected': function (val, ) {
+      this.$store.commit('setSelectedTasksListWeek', val)
+    }
+  }
 }
 </script>
