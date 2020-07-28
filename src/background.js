@@ -203,7 +203,7 @@ ipcMain.on('getTasksBetween', async (event, {from, to}) => {
   for (var i = 0; i < results.length; i++) {
     let day = moment(results[i].started).hours(0).minutes(0).seconds(0)
     if (day in perDaysResults) {
-      perDaysResults[day].unshift(results[i])
+      perDaysResults[day].push(results[i])
     } else {
       perDaysResults[day] = [results[i]]
     }
