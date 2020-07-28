@@ -115,7 +115,8 @@ let knex = require('knex')({
   useNullAsDefault: true,
   migrations: {
     directory: isDevelopment ? 'src/migrations/' : path.join(process.resourcesPath, 'src/migrations')
-  }
+  },
+  debug: isDevelopment ? true : false
 })
 
 knex.migrate.latest().then(function () {
