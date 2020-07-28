@@ -1,6 +1,9 @@
 <template>
-  <div class="tasks"> 
-    <TaskItem v-for="task in tasks" :key="task.id" :task="task" />
+  <div class="tasks">
+    <div class="tasksDay" v-for="(tasks, day) in tasksDays" :key="tasks" :tasks="tasksDays[tasks]">
+      <div class="taskDayHeader">{{ getLocalDay(day) }}</div>
+      <TaskItem v-for="task in tasks" :key="task.id" :task="task" />
+    </div>
   </div>
 </template>
 
@@ -12,7 +15,7 @@ import moment from 'moment'
 export default {
   name: 'Home',
   data: () => ({
-    tasks: []
+    tasksDays: []
   }),
   components: {
     TaskItem
@@ -22,17 +25,19 @@ export default {
 
     // A task has been removed
     window.ipcRenderer.on('taskRemoved', (_, {taskId}) => {
-      for (var i = 0; i < this.tasks.length; i++) {
-        if (this.tasks[i].id === taskId) {
-          this.tasks.splice(i, 1)
-          i--
-        }
-      }
+      console.log('TODO', taskId)
+      // for (var i = 0; i < this.tasks.length; i++) {
+      //   if (this.tasks[i].id === taskId) {
+      //     this.tasksDays.splice(i, 1)
+      //     i--
+      //   }
+      // }
     });
 
     // A task has been added
     window.ipcRenderer.on('taskAdded', (_, taskObject) => {
-      this.tasks.unshift(taskObject)
+      console.log('TODO', taskObject)
+      // this.tasks.unshift(taskObject)
     });
   },
   methods: {
@@ -40,7 +45,11 @@ export default {
       let mday = moment(day)
       let startDay = mday.startOf('isoWeek').toDate()
       let endDay = mday.endOf('isoWeek').toDate()
-      this.tasks = window.ipcRenderer.sendSync('getTasksBetween', {from: startDay, to: endDay})
+      this.tasksDays = window.ipcRenderer.sendSync('getTasksBetween', {from: startDay, to: endDay})
+      console.log(this.tasksDays)
+    },
+    getLocalDay: function (day) {
+      return moment(day).locale(this.$i18n.locale).format('dddd, DD MMMM')
     }
   },
   computed: {

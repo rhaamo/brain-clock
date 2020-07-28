@@ -41,6 +41,11 @@ div#nav {
 
 /* Tasks */
 
+div.tasks div.taskDayHeader {
+    background-color: #d7ecfa;
+    padding: 4px;
+}
+
 div.tasks {
     flex: 1;
     overflow-y: scroll;
