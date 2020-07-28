@@ -4,7 +4,7 @@ import { app, protocol, BrowserWindow, ipcMain, shell } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import ElectronStore from 'electron-store'
-import moment from 'moment'
+import moment, { unix } from 'moment'
 
 const path = require('path')
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -201,7 +201,8 @@ ipcMain.on('getTasksBetween', async (event, {from, to}) => {
 
   // first create the arrays to receive days
   for (var i = 0; i < results.length; i++) {
-    let day = moment(results[i].started).hours(0).minutes(0).seconds(0)
+    // reset HH:MM:SS:MS to zero, then cast as ISO String
+    let day = moment(results[i].started).hours(0).minutes(0).seconds(0).milliseconds(0).toISOString()
     if (day in perDaysResults) {
       perDaysResults[day].push(results[i])
     } else {

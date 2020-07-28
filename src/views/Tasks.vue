@@ -1,6 +1,6 @@
 <template>
   <div class="tasks">
-    <div class="tasksDay" v-for="(tasks, day) in tasksDays" :key="tasks" :tasks="tasksDays[tasks]">
+    <div class="tasksDay" v-for="(tasks, day) in tasksDays" :key="day" :tasks="tasksDays[tasks]">
       <div class="taskDayHeader">{{ getLocalDay(day) }}</div>
       <TaskItem v-for="task in tasks" :key="task.id" :task="task" />
     </div>
