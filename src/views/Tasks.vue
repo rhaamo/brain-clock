@@ -25,19 +25,24 @@ export default {
 
     // A task has been removed
     window.ipcRenderer.on('taskRemoved', (_, {taskId}) => {
-      console.log('TODO', taskId)
-      // for (var i = 0; i < this.tasks.length; i++) {
-      //   if (this.tasks[i].id === taskId) {
-      //     this.tasksDays.splice(i, 1)
-      //     i--
-      //   }
-      // }
+      for (var d in this.tasksDays) {
+        for (var i = 0; i < this.tasksDays[d].length; i++) {
+          if (this.tasksDays[d][i].id === taskId) {
+            this.tasksDays[d].splice(i, 1)
+            i--
+          }
+        }
+      }
     });
 
     // A task has been added
     window.ipcRenderer.on('taskAdded', (_, taskObject) => {
-      console.log('TODO', taskObject)
-      // this.tasks.unshift(taskObject)
+      let day = moment(taskObject.started).hours(0).minutes(0).seconds(0).milliseconds(0).toISOString()
+      for (var d in this.tasksDays) {
+        if (d === day) {
+          this.tasksDays[d].unshift(taskObject)
+        }
+      }
     });
   },
   methods: {
