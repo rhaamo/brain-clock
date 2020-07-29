@@ -4,6 +4,7 @@ import { app, protocol, BrowserWindow, ipcMain, shell } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import ElectronStore from 'electron-store'
+import moment, { unix } from 'moment'
 
 const path = require('path')
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -189,8 +190,29 @@ ipcMain.on('getAllTasks', (event) => {
   knex.select('id', 'started', 'duration', 'title').orderBy('started', 'desc').from('tasks').then(rows => event.returnValue = rows)
 })
 
-ipcMain.on('getTasksBetween', (event, {from, to}) => {
-  knex.select('id', 'started', 'duration', 'title').orderBy('started', 'desc').from('tasks').where('started', '>=', from).andWhere('started', '<=', to).then(rows => event.returnValue = rows)
+async function getTasksBetween (from, to) {
+  return knex.select('id', 'started', 'duration', 'title').orderBy('started', 'desc').from('tasks').where('started', '>=', from).andWhere('started', '<=', to).then(rows => {return rows})
+}
+
+ipcMain.on('getTasksBetween', async (event, {from, to}) => {
+  let results = await getTasksBetween(from, to)
+  //event.returnValue = results
+  let perDaysResults = {}
+
+  // first create the arrays to receive days
+  for (var i = 0; i < results.length; i++) {
+    // reset HH:MM:SS:MS to zero, then cast as ISO String
+    let day = moment(results[i].started).hours(0).minutes(0).seconds(0).milliseconds(0).toISOString()
+    if (day in perDaysResults) {
+      perDaysResults[day].push(results[i])
+    } else {
+      perDaysResults[day] = [results[i]]
+    }
+  }
+
+  // then populate the arrays
+  console.log('PAGINATED RESULTS:', perDaysResults)
+  event.returnValue = perDaysResults
 })
 
 ipcMain.on('deleteTask', (event, taskId) => {
