@@ -265,6 +265,16 @@ ipcMain.on('deleteProject', (event, projectId) => {
   console.log('PLS FIX ME')
   knex.where('id', projectId).from('projects').delete().then(function (result) {
     // returns the number of rows impacted
-    event.returnValue = result === 1 ? true : false
+    event.returnValue = result === 1
+  })
+})
+
+ipcMain.on('updateProject', (event, {id, name, si_id}) => {
+  console.log(id, name, si_id)
+  knex('projects').update({
+    name: name,
+    si_id: si_id
+  }).where({id: id}).then(function (result) {
+    event.returnValue = result === 1
   })
 })
