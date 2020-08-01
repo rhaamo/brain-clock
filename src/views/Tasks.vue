@@ -37,11 +37,18 @@ export default {
 
     // A task has been added
     window.ipcRenderer.on('taskAdded', (_, taskObject) => {
-      let day = moment(taskObject.started).hours(0).minutes(0).seconds(0).milliseconds(0).toISOString()
+      let day = moment(taskObject.started).format('DD.MM.YYYY') 
+      let inserted = false
       for (var d in this.tasksDays) {
         if (d === day) {
           this.tasksDays[d].unshift(taskObject)
+          inserted = true
         }
+      }
+
+      if (!inserted) {
+        console.log("creating new day", day, taskObject.started)
+        this.tasksDays[day] = [taskObject]
       }
     });
   },
@@ -54,7 +61,7 @@ export default {
       console.log(this.tasksDays)
     },
     getLocalDay: function (day) {
-      return moment(day).locale(this.$i18n.locale).format('dddd, DD MMMM')
+      return moment(day, 'DD.MM.YYYY').locale(this.$i18n.locale).format('dddd, DD MMMM')
     }
   },
   computed: {
