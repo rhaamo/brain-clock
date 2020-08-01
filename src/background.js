@@ -190,8 +190,12 @@ ipcMain.on('addProject', async (event, {name, si_id}) => {
   event.returnValue = id
 })
 
-ipcMain.on('getPreference', (event, {key}) => {
-  event.returnValue = preferencesStore.get(key);
+ipcMain.on('getPreference', (event, {key, dflt}) => {
+  if (dflt) {
+    event.returnValue = preferencesStore.get(key, dflt);
+  } else {
+    event.returnValue = preferencesStore.get(key);
+  }
 })
 
 ipcMain.on('setPreference', (event, {key, value}) => {

@@ -84,9 +84,6 @@ export default {
       icon: 'fa fa-play'
     },
     timerInterval: null,
-    preferences: {
-      locale: 'en-US'
-    },
     manual: {
       day: null,
       from: null,
@@ -171,7 +168,9 @@ export default {
       this.filter.selected = selected.add(7, 'days').toDate()
     }
   },
-  mounted () {
+  created: function () {
+  },
+  mounted: function () {
     // timer started
     window.ipcRenderer.on('timerStarted', (_, startDate) => {
       console.log('started', startDate);
@@ -194,15 +193,14 @@ export default {
     });
 
     // Get various preferences
-    this.$root.$i18n.locale = this.preferences.locale = window.ipcRenderer.sendSync('getPreference', {key: 'locale'})
+    this.$root.$i18n.locale = window.ipcRenderer.sendSync('getPreference', {key: 'locale', dflt: 'en-US'})
     this.$store.commit('setSiProjectUrl', window.ipcRenderer.sendSync('getPreference', {key: 'si_project_url'}))
-
-    // Load projects in store
-    this.$store.commit('loadProjects')
 
     // Set the current week as selected, this will also trigger a tasks refresh
     this.filter.selected = new Date()
 
+    // Load projects in store
+    this.$store.commit('loadProjects')
   },
   watch: {
     // Commit to the store when the selected week change
