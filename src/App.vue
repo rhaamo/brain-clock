@@ -6,22 +6,27 @@
             <textarea v-model="taskText" name="taskText" id="taskText" cols="20" rows="3" placeholder="OwO ?"></textarea>
           </div>
 
-          <div id="ahTimes" v-if="autoMode">
-            {{ $t("header.started") }} <span id="timerStartDate">{{taskStartedAt}}</span><br />
-            {{ $t("header.spent") }} <span id="timerSpentTime">{{taskTimeSpent}}</span>
-          </div>
-          <div id="ahTimes" v-else>
-            <b-form-datepicker id="manualTaskTime" size="sm" today-button :locale="$i18n.locale" value-as-date v-model="manual.day" start-weekday="1"></b-form-datepicker>
+          <div id="ahTimes">
 
-            <div class="row">
-              <div class="col">
-                <b-form-timepicker id="manualTaskFrom" size="sm" :state="fromToState" :placeholder="$t('header.manual.from')" now-button :show-seconds="false" :hide-header="true" :hour12="false" :locale="$i18n.locale" v-model="manual.from"></b-form-timepicker>
+            <b-form-select v-model="project_id" size="sm" :options="projectsOptions"></b-form-select>
+            
+            <template v-if="autoMode">
+              {{ $t("header.started") }} <span id="timerStartDate">{{taskStartedAt}}</span><br />
+              {{ $t("header.spent") }} <span id="timerSpentTime">{{taskTimeSpent}}</span><br />
+            </template>
+
+            <template v-else>
+              <b-form-datepicker id="manualTaskTime" size="sm" today-button :locale="$i18n.locale" value-as-date v-model="manual.day" start-weekday="1"></b-form-datepicker>
+
+              <div class="row">
+                <div class="col">
+                  <b-form-timepicker id="manualTaskFrom" size="sm" :state="fromToState" :placeholder="$t('header.manual.from')" now-button :show-seconds="false" :hide-header="true" :hour12="false" :locale="$i18n.locale" v-model="manual.from"></b-form-timepicker>
+                </div>
+                <div class="col">
+                  <b-form-timepicker id="manualTaskTo" size="sm" :state="fromToState" :placeholder="$t('header.manual.to')" now-button :hour12="false" :show-seconds="false" :hide-header="true" :locale="$i18n.locale" v-model="manual.to"></b-form-timepicker>
+                </div>
               </div>
-              <div class="col">
-                <b-form-timepicker id="manualTaskTo" size="sm" :state="fromToState" :placeholder="$t('header.manual.to')" now-button :hour12="false" :show-seconds="false" :hide-header="true" :locale="$i18n.locale" v-model="manual.to"></b-form-timepicker>
-              </div>
-            </div>
-            <br/>
+            </template>
           </div>
 
           <div id="ahBtns">
@@ -61,6 +66,7 @@
 <style lang="scss" src="./App.scss"></style>
 
 <script>
+import { mapState } from 'vuex'
 import timeUtils from './utils/time'
 import moment from 'moment'
 
@@ -68,6 +74,7 @@ export default {
   data: () => ({
     autoMode: true,
     taskText: '',
+    project_id: null,
     timer: {
       startedAt: null,
       ticking: false,
@@ -88,6 +95,7 @@ export default {
     }
   }),
   computed: {
+    ...mapState(['projects']),
     taskStartedAt() { return this.timer.startedAt === null ? this.$t("header.time.notYet") : timeUtils.formatShort(this.timer.startedAt, this.$i18n.locale) },
     taskTimeSpent() { return this.timer.spent === null ? this.$t("header.time.oNs") : timeUtils.secondsToDdHhMmSs(this.timer.spent, this.$i18n.locale) },
     fromToState() { return timeUtils.fromSupTo(this.manual.from, this.manual.to) ? false : null },
@@ -96,7 +104,15 @@ export default {
       let start = day.startOf('isoWeek').locale(this.$i18n.locale).format('DD/MM')
       let end = day.endOf('isoWeek').locale(this.$i18n.locale).format('DD/MM')
       return `${start} - ${end}`
-      }
+    },
+    projectsOptions() {
+      let opts = this.projects.map(p => {
+        let prjName = p.si_id ? `${p.si_id} - ${p.name}` : p.name
+        return { value: p.id, text: prjName }
+      })
+      opts.unshift({ value: null, text: this.$t("header.no_project_selected") })
+      return opts
+    }
   },
   methods: {
     toggleTimer: function () {
@@ -111,13 +127,13 @@ export default {
           startDate.setSeconds(0)
 
           let duration = timeUtils.deltaHms(this.manual.from, this.manual.to)
-          window.ipcRenderer.send('addManualTask', {startDate: startDate, duration: duration, text: this.taskText})
+          window.ipcRenderer.send('addManualTask', {startDate: startDate, duration: duration, text: this.taskText, project_id: this.project_id})
 
           // reset task text
           this.taskText = ''
         }
       } else {
-        window.ipcRenderer.send('toggleTimer', this.taskText || '')
+        window.ipcRenderer.send('toggleTimer', this.taskText || '', this.project_id)
       }
     },
     startTimer: function () {
@@ -171,6 +187,7 @@ export default {
       this.timer.startedAt = null;
       this.timer.spent = null;
       this.taskText = ''
+      this.project_id = null
       clearInterval(this.timerInterval)
     });
 

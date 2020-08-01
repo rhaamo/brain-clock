@@ -20,7 +20,8 @@ export default {
         manual: {
             from: 'from',
             to: 'to'
-        }
+        },
+        no_project_selected: 'No project'
     },
     footer: {
         prevWeek: 'previous week',
@@ -40,7 +41,8 @@ export default {
         editThisTask: 'Edit task.',
         form: {
             update: 'update'
-        }
+        },
+        project: 'Project:'
     },
     about: {
         description: 'BrainClock is developped by dashie.',

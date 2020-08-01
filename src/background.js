@@ -151,7 +151,7 @@ async function insertAndGetId(table, entity) {
   return row.id
 }
 
-ipcMain.on('toggleTimer', (e, taskText ) => {
+ipcMain.on('toggleTimer', (e, taskText, project_id) => {
   if (timerState.ticking === false) {
     timerState.ticking = true
     timerState.start = Date.now()
@@ -159,28 +159,29 @@ ipcMain.on('toggleTimer', (e, taskText ) => {
     win.webContents.send("timerStarted", timerState.start)
   } else {
     timerState.end = Date.now()
-    insertTaskAndNotify(timerState.start, timerState.end, taskText);
+    insertTaskAndNotify(timerState.start, timerState.end, taskText, project_id);
     timerState.ticking = false
     console.log('DEBUG: timer stopped');
     win.webContents.send("timerStopped", timerState.start)
   }
 })
 
-ipcMain.on('addManualTask', (e, {startDate, duration, text}) => {
+ipcMain.on('addManualTask', (e, {startDate, duration, text, project_id}) => {
   let endDate = new Date(startDate.getTime()).setSeconds(startDate.getSeconds() + duration)
-  insertTaskAndNotify(startDate, endDate, text)
+  insertTaskAndNotify(startDate, endDate, text, project_id)
 })
 
-function insertTaskAndNotify (start, end, text) {
+function insertTaskAndNotify (start, end, text, project_id) {
   console.log("Task:", text, start, end);
   let duration = Math.floor((end - start) / 1000);
   knex.insert({ 
     started: start,
     duration: duration,
-    title: text
+    title: text,
+    project_id: project_id
    }).into('tasks').returning('id').then(function (result) {
      let id = result[0];
-    win.webContents.send("taskAdded", {id: id, started: start, duration: duration, title: text });
+    win.webContents.send("taskAdded", {id: id, started: start, duration: duration, title: text, project_id: project_id });
    })
 }
 
@@ -202,7 +203,7 @@ ipcMain.on('getAllTasks', (event) => {
 })
 
 async function getTasksBetween (from, to) {
-  return knex.select('id', 'started', 'duration', 'title').orderBy('started', 'desc').from('tasks').where('started', '>=', from).andWhere('started', '<=', to).then(rows => {return rows})
+  return knex.select('id', 'started', 'duration', 'title', 'project_id').orderBy('started', 'desc').from('tasks').where('started', '>=', from).andWhere('started', '<=', to).then(rows => {return rows})
 }
 
 ipcMain.on('getTasksBetween', async (event, {from, to}) => {

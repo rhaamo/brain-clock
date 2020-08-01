@@ -16,6 +16,12 @@
           <b-button v-on:click="deleteTask(task.id)" v-b-tooltip.hover :title="$t('tasks.removeThisTask')" variant="outline-danger" size="sm"><i class="fa fa-remove" aria-hidden="true"></i></b-button>
         </b-col>
       </b-row>
+
+      <b-row v-if="task.project_id">
+        <b-col>
+          {{ $t('tasks.project') }} <template v-if="si_project_url && getPrj(task.project_id).si_id"><a href="#" @click="openProjectUrl(getPrj(task.project_id).si_id)">{{ getPrj(task.project_id).si_id }}</a> - {{ getPrj(task.project_id).name }}</template><template v-else>{{ getPrj(task.project_id).name }}</template>
+        </b-col>
+      </b-row>
     </div>
 
     <b-collapse class="taskEdit" :id="editId" :data-task-id="task.id">
@@ -47,6 +53,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import timeUtils from '../utils/time'
 
 export default {
@@ -63,6 +71,7 @@ export default {
     task: Object
   },
   computed: {
+    ...mapState(['si_project_url', 'projects']),
     taskDay() { return timeUtils.formatShort(this.task.started, this.$i18n.locale) },
     taskFrom() { return timeUtils.formatShort(this.task.started, this.$i18n.locale, 'HH:mm:ss') },
     taskTo() { 
@@ -104,6 +113,12 @@ export default {
         this.task.started = startDate
         this.task.duration = duration
       }
+    },
+    openProjectUrl: function (si_id) {
+      window.ipcRenderer.send('openProjectSiUrl', si_id)
+    },
+    getPrj: function (id) {
+      for (let i=0; i < this.projects.length; i++) { if (this.projects[i].id === id) { return this.projects[i] }}
     }
   }
 }
