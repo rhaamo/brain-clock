@@ -22,42 +22,7 @@
 
     <b-row class="projects_list" align-h="center">
       <b-col class="col-11">
-        <b-list-group class="project_item" v-for="(project, index) in projects" :key="project.id">
-          <b-list-group-item>
-            <b-row>
-              <b-col cols="9">
-                <div v-if="si_project_url && project.si_id">
-                  <a href="#" @click="openProjectUrl(project.si_id)">{{ project.si_id }}</a> - {{ project.name }}
-                </div>
-                <div v-else>
-                  {{ project.name }}
-                </div>
-              </b-col>
-
-              <b-col cols="3">
-                <div class="buttons">
-                  <b-button @click.prevent v-b-toggle="editId(project.id)" v-b-tooltip.hover :title="$t('projects.edit')" variant="outline-secondary" size="sm"><i class="fa fa-edit" aria-hidden="true"></i></b-button>
-                  &nbsp;
-                  <b-button v-on:click="deleteProject(project.id)" v-b-tooltip.hover :title="$t('projects.delete')" variant="outline-danger" size="sm"><i class="fa fa-remove" aria-hidden="true"></i></b-button>
-                </div>
-              </b-col>
-            </b-row>
-
-            <b-collapse class="editProjectCollapse" :id="editId(project.id)">
-              <b-row>
-                <b-col cols="6">
-                  <b-form-input :value="project.name" ref="name" sm="2" size="sm" :placeholder="$t('projects.form.name')"></b-form-input>
-                </b-col>
-                <b-col cols="3">
-                  <b-form-input :value="project.si_id" ref="id" sm="2" size="sm" :placeholder="$t('projects.form.si_id')"></b-form-input>
-                </b-col>
-                <b-col cols="3">
-                  <b-button size="sm" type="submit" variant="primary" @click="updateProject(project.id, index)">{{ $t("projects.form.save") }}</b-button>
-                </b-col>
-              </b-row>
-            </b-collapse>
-          </b-list-group-item>
-        </b-list-group>
+        <ProjectItem v-for="project in projects" :key="project.id" :project="project" />
       </b-col>
     </b-row>
   </div>
@@ -65,6 +30,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import ProjectItem from '@/components/ProjectItem.vue'
 
 export default {
   name: 'Home',
@@ -75,17 +41,9 @@ export default {
     }
   }),
   components: {
-},
+    ProjectItem
+  },
   mounted () {
-    // A task has been removed
-    window.ipcRenderer.on('projectRemoved', (_, {projectId}) => {
-      console.log(projectId)
-    });
-
-    // A task has been added
-    window.ipcRenderer.on('projectAdded', (_, projectObject) => {
-      console.log(projectObject)
-    });
   },
   methods: {
     addProject: function (event) {
@@ -96,24 +54,9 @@ export default {
         this.$store.commit('loadProjects')
       }
     },
-    openProjectUrl: function (si_id) {
-      window.ipcRenderer.send('openProjectSiUrl', si_id)
-    },
-    deleteProject: function (projectId) {
-      window.ipcRenderer.sendSync('deleteProject', projectId)
-      this.$store.commit('loadProjects')
-      this.$store.commit('reloadTasks')
-    },
-    editId(id) { return `editProject${id}` },
-    updateProject(id, index) {
-      let name = this.$refs.name[index].vModelValue
-      let si_id = this.$refs.id[index].vModelValue
-      window.ipcRenderer.sendSync('updateProject', {id: id, name: name, si_id: si_id})
-      this.$store.commit('loadProjects')
-    }
   },
   computed: {
-    ...mapState(['si_project_url', 'projects']),
+    ...mapState(['projects']),
   },
   watch: {
   }
