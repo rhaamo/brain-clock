@@ -1,13 +1,14 @@
 export default {
     settings: {
         form: {
-            locale: 'Locale:',
-            save: 'sauver'
+            locale: 'Locale :',
+            save: 'sauver',
+            si_project_url: 'Format d\'URL du SI Projet (utiliser %ID% pour le remplacment de l\'ID) :',
         }
     },
     header: {
-        started: 'Démarré:',
-        spent: 'Écoulé:',
+        started: 'Démarré :',
+        spent: 'Écoulé :',
         time: {
             notYet: 'Pas encore.',
             oNs: '0ns.'

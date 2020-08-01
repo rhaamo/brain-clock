@@ -145,6 +145,12 @@ let timerState = {
   end: null
 }
 
+async function insertAndGetId(table, entity) {
+  await knex(table).insert(entity)
+  let [row] = await knex.select(knex.raw('LAST_INSERT_ROWID() as id'))
+  return row.id
+}
+
 ipcMain.on('toggleTimer', (e, taskText ) => {
   if (timerState.ticking === false) {
     timerState.ticking = true
@@ -177,6 +183,11 @@ function insertTaskAndNotify (start, end, text) {
     win.webContents.send("taskAdded", {id: id, started: start, duration: duration, title: text });
    })
 }
+
+ipcMain.on('addProject', async (event, {name, si_id}) => {
+  let id = await insertAndGetId('projects', {name: name, si_id: si_id})
+  event.returnValue = id
+})
 
 ipcMain.on('getPreference', (event, {key}) => {
   event.returnValue = preferencesStore.get(key);
@@ -228,6 +239,13 @@ ipcMain.on('openAboutLink', (_) => {
   shell.openExternal('https://dev.sigpipe.me/dashie/brainclock')
 })
 
+ipcMain.on('openProjectSiUrl', (_, si_id) => {
+  let projectSiUrl = preferencesStore.get('si_project_url')
+  if (projectSiUrl) {
+    shell.openExternal(projectSiUrl.replace('%ID%', si_id))
+  }
+})
+
 ipcMain.on('updateTask', (event, {taskId, start, end, duration, title}) => {
   knex('tasks').update({
     started: start,
@@ -239,5 +257,5 @@ ipcMain.on('updateTask', (event, {taskId, start, end, duration, title}) => {
 })
 
 ipcMain.on('getProjects', (event) => {
-  event.returnValue = []
+  knex.select('id', 'name', 'si_id').orderBy('name').from('projects').then(rows => event.returnValue = rows)
 })

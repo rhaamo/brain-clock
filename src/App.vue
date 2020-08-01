@@ -176,8 +176,11 @@ export default {
 
     // Get various preferences
     this.$root.$i18n.locale = this.preferences.locale = window.ipcRenderer.sendSync('getPreference', {key: 'locale'})
+    this.$store.commit('setSiProjectUrl', window.ipcRenderer.sendSync('getPreference', {key: 'si_project_url'}))
 
     this.filter.selected = new Date()
+
+    this.$store.commit('loadProjects')
   },
   watch: {
     // Commit to the store when the selected week change

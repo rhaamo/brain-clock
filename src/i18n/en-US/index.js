@@ -2,7 +2,8 @@ export default {
     settings: {
         form: {
             locale: 'Locale:',
-            save: 'save'
+            save: 'save',
+            si_project_url: 'SI Project URL format (uses %ID% for project ID replacement):',
         }
     },
     header: {
@@ -44,5 +45,12 @@ export default {
     about: {
         description: 'BrainClock is developped by dashie.',
         sources: 'sources'
+    },
+    projects: {
+        form: {
+            name: 'Name of the project',
+            si_id: 'ABCD123',
+            save: 'save'
+        }
     }
 }
