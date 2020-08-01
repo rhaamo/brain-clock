@@ -33,7 +33,7 @@ export default {
           distribution: 'serie'
         }],
         yAxes: [{
-          distribution: 'logarithm',
+          type: 'linear',
           ticks: {
             min: 0
           }
@@ -42,7 +42,7 @@ export default {
       tooltips: {
         callbacks: {
           label: function (tti) {
-            return `${tti.yLabel} hours`
+            return moment.duration(tti.yLabel, 'hours').format('hh[h] mm[m] ss[s]')
           }
         }
       }
