@@ -45,5 +45,14 @@ export default {
     about: {
         description: 'BrainClock est développé par dashie.',
         sources: 'sources'
+    },
+    projects: {
+        form: {
+            name: 'Nom du projet',
+            si_id: 'ABCD123',
+            save: 'sauver'
+        },
+        edit: 'Editer le projet',
+        delete: 'Supprimer le projet'
     }
 }

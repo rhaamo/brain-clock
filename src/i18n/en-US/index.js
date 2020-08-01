@@ -51,6 +51,8 @@ export default {
             name: 'Name of the project',
             si_id: 'ABCD123',
             save: 'save'
-        }
+        },
+        edit: 'Edit project',
+        delete: 'Delete project'
     }
 }
