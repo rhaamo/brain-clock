@@ -36,6 +36,8 @@
           </b-col>
         </b-row>
 
+        <b-form-select v-model="edit.projectId" size="sm" :options="projectsOptions"></b-form-select>
+
         <b-form-datepicker id="manualTaskTime" size="sm" today-button :locale="$i18n.locale" value-as-date v-model="edit.taskDay" start-weekday="1"></b-form-datepicker>
 
         <b-row>
@@ -64,7 +66,8 @@ export default {
       taskDescription: null,
       taskDay: null,
       taskFrom: null,
-      taskTo: null
+      taskTo: null,
+      projectId: null
     }
   }),
   props: {
@@ -82,12 +85,21 @@ export default {
     taskDuration() { return timeUtils.secondsToDdHhMmSs(this.task.duration, this.$i18n.locale) },
     editId() { return `editTask${this.task.id}` },
     fromToState() { return timeUtils.fromSupTo(this.task.started, this.task.ended) ? false : null },
+    projectsOptions() {
+      let opts = this.projects.map(p => {
+        let prjName = p.si_id ? `${p.si_id} - ${p.name}` : p.name
+        return { value: p.id, text: prjName }
+      })
+      opts.unshift({ value: null, text: this.$t("header.no_project_selected") })
+      return opts
+    }
   },
   mounted () {
     this.edit.taskDescription = this.task.title
     this.edit.taskDay = new Date(this.task.started)
     this.edit.taskFrom = this.taskFrom
     this.edit.taskTo = this.taskTo
+    this.edit.projectId = this.task.project_id
   },
   methods: {
     deleteTask: function (taskId) {
@@ -106,12 +118,13 @@ export default {
 
       let duration = timeUtils.deltaHms(this.edit.taskFrom, this.edit.taskTo)
 
-      let res = window.ipcRenderer.sendSync('updateTask', {taskId: this.task.id, start: startDate, duration: duration, title: this.edit.taskDescription})
+      let res = window.ipcRenderer.sendSync('updateTask', {taskId: this.task.id, start: startDate, duration: duration, title: this.edit.taskDescription, projectId: this.edit.projectId})
       console.log(res)
       if (res === true) {
         this.task.title = this.edit.taskDescription
         this.task.started = startDate
         this.task.duration = duration
+        this.task.project_id = this.edit.projectId
       }
     },
     openProjectUrl: function (si_id) {

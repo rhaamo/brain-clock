@@ -247,11 +247,12 @@ ipcMain.on('openProjectSiUrl', (_, si_id) => {
   }
 })
 
-ipcMain.on('updateTask', (event, {taskId, start, end, duration, title}) => {
+ipcMain.on('updateTask', (event, {taskId, start, end, duration, title, projectId}) => {
   knex('tasks').update({
     started: start,
     duration: duration,
-    title: title
+    title: title,
+    project_id: projectId
   }).where({id: taskId}).then(function (result) {
     event.returnValue = result === 1
   })
