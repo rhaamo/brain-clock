@@ -15,7 +15,7 @@
         </b-row>
 
         <b-row align-h="center">
-          <b-col cols="5">
+          <b-col cols="10">
             <b-form-group
               id="igSiProjectUrl"
               :label="$t('settings.form.si_project_url')"
