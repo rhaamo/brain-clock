@@ -44,8 +44,11 @@ export default {
     si_project_url: ""
   }),
   mounted () {
-    this.locale = this.$root.$i18n.locale
-    console.log(this.locale)
+    // slightly delay that to ensure we have loaded the settings in store
+    this.$nextTick(function () {
+      this.locale = this.$root.$i18n.locale
+      this.si_project_url = this.$store.getters.getSiProjectUrl
+    })
   },
   methods: {
     saveSettings (event) {
