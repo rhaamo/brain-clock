@@ -2,7 +2,8 @@ export default {
     settings: {
         form: {
             locale: 'Locale:',
-            save: 'save'
+            save: 'save',
+            si_project_url: 'SI Project URL format (uses %ID% for project ID replacement):',
         }
     },
     header: {
@@ -19,7 +20,8 @@ export default {
         manual: {
             from: 'from',
             to: 'to'
-        }
+        },
+        no_project_selected: 'No project'
     },
     footer: {
         prevWeek: 'previous week',
@@ -29,7 +31,8 @@ export default {
     nav: {
         tasks: 'Tasks',
         settings: 'Settings',
-        about: 'About'
+        about: 'About',
+        projects: 'Projects'
     },
     tasks: {
         noDescription: 'This task has no description.',
@@ -38,10 +41,20 @@ export default {
         editThisTask: 'Edit task.',
         form: {
             update: 'update'
-        }
+        },
+        project: 'Project:'
     },
     about: {
         description: 'BrainClock is developped by dashie.',
         sources: 'sources'
+    },
+    projects: {
+        form: {
+            name: 'Name of the project',
+            si_id: 'ABCD123',
+            save: 'save'
+        },
+        edit: 'Edit project',
+        delete: 'Delete project'
     }
 }

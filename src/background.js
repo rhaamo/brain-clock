@@ -145,7 +145,13 @@ let timerState = {
   end: null
 }
 
-ipcMain.on('toggleTimer', (e, taskText ) => {
+async function insertAndGetId(table, entity) {
+  await knex(table).insert(entity)
+  let [row] = await knex.select(knex.raw('LAST_INSERT_ROWID() as id'))
+  return row.id
+}
+
+ipcMain.on('toggleTimer', (e, taskText, project_id) => {
   if (timerState.ticking === false) {
     timerState.ticking = true
     timerState.start = Date.now()
@@ -153,30 +159,36 @@ ipcMain.on('toggleTimer', (e, taskText ) => {
     win.webContents.send("timerStarted", timerState.start)
   } else {
     timerState.end = Date.now()
-    insertTaskAndNotify(timerState.start, timerState.end, taskText);
+    insertTaskAndNotify(timerState.start, timerState.end, taskText, project_id);
     timerState.ticking = false
     console.log('DEBUG: timer stopped');
     win.webContents.send("timerStopped", timerState.start)
   }
 })
 
-ipcMain.on('addManualTask', (e, {startDate, duration, text}) => {
+ipcMain.on('addManualTask', (e, {startDate, duration, text, project_id}) => {
   let endDate = new Date(startDate.getTime()).setSeconds(startDate.getSeconds() + duration)
-  insertTaskAndNotify(startDate, endDate, text)
+  insertTaskAndNotify(startDate, endDate, text, project_id)
 })
 
-function insertTaskAndNotify (start, end, text) {
+function insertTaskAndNotify (start, end, text, project_id) {
   console.log("Task:", text, start, end);
   let duration = Math.floor((end - start) / 1000);
   knex.insert({ 
     started: start,
     duration: duration,
-    title: text
+    title: text,
+    project_id: project_id
    }).into('tasks').returning('id').then(function (result) {
      let id = result[0];
-    win.webContents.send("taskAdded", {id: id, started: start, duration: duration, title: text });
+    win.webContents.send("taskAdded", {id: id, started: start, duration: duration, title: text, project_id: project_id });
    })
 }
+
+ipcMain.on('addProject', async (event, {name, si_id}) => {
+  let id = await insertAndGetId('projects', {name: name, si_id: si_id})
+  event.returnValue = id
+})
 
 ipcMain.on('getPreference', (event, {key}) => {
   event.returnValue = preferencesStore.get(key);
@@ -191,7 +203,7 @@ ipcMain.on('getAllTasks', (event) => {
 })
 
 async function getTasksBetween (from, to) {
-  return knex.select('id', 'started', 'duration', 'title').orderBy('started', 'desc').from('tasks').where('started', '>=', from).andWhere('started', '<=', to).then(rows => {return rows})
+  return knex.select('id', 'started', 'duration', 'title', 'project_id').orderBy('started', 'desc').from('tasks').where('started', '>=', from).andWhere('started', '<=', to).then(rows => {return rows})
 }
 
 ipcMain.on('getTasksBetween', async (event, {from, to}) => {
@@ -201,8 +213,8 @@ ipcMain.on('getTasksBetween', async (event, {from, to}) => {
 
   // first create the arrays to receive days
   for (var i = 0; i < results.length; i++) {
-    // reset HH:MM:SS:MS to zero, then cast as ISO String
-    let day = moment(results[i].started).hours(0).minutes(0).seconds(0).milliseconds(0).toISOString()
+    // cast as DD.MM.YYYY to avoid hours, unneeded here
+    let day = moment(results[i].started).format('DD.MM.YYYY')
     if (day in perDaysResults) {
       perDaysResults[day].push(results[i])
     } else {
@@ -228,12 +240,43 @@ ipcMain.on('openAboutLink', (_) => {
   shell.openExternal('https://dev.sigpipe.me/dashie/brainclock')
 })
 
-ipcMain.on('updateTask', (event, {taskId, start, end, duration, title}) => {
+ipcMain.on('openProjectSiUrl', (_, si_id) => {
+  let projectSiUrl = preferencesStore.get('si_project_url')
+  if (projectSiUrl) {
+    shell.openExternal(projectSiUrl.replace('%ID%', si_id))
+  }
+})
+
+ipcMain.on('updateTask', (event, {taskId, start, end, duration, title, projectId}) => {
   knex('tasks').update({
     started: start,
     duration: duration,
-    title: title
+    title: title,
+    project_id: projectId
   }).where({id: taskId}).then(function (result) {
+    event.returnValue = result === 1
+  })
+})
+
+ipcMain.on('getProjects', (event) => {
+  knex.select('id', 'name', 'si_id').orderBy('name').from('projects').then(rows => event.returnValue = rows)
+})
+
+ipcMain.on('deleteProject', (event, projectId) => {
+  knex.where('id', projectId).from('projects').delete().then(function (result) {
+    // NULL associated projects relations
+    knex('tasks').update({ project_id: null }).where({ project_id: projectId }).then()
+    // returns the number of rows impacted
+    event.returnValue = result === 1
+  })
+})
+
+ipcMain.on('updateProject', (event, {id, name, si_id}) => {
+  console.log(id, name, si_id)
+  knex('projects').update({
+    name: name,
+    si_id: si_id
+  }).where({id: id}).then(function (result) {
     event.returnValue = result === 1
   })
 })

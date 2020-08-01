@@ -15,6 +15,18 @@
         </b-row>
 
         <b-row align-h="center">
+          <b-col cols="5">
+            <b-form-group
+              id="igSiProjectUrl"
+              :label="$t('settings.form.si_project_url')"
+              label-for="si_project_url"
+            >
+            <b-form-input v-model="si_project_url" class="mb-4"></b-form-input>
+            </b-form-group>
+          </b-col>
+        </b-row>
+
+        <b-row align-h="center">
           <b-col cols="4" align="center">
             <b-button type="submit" variant="primary">{{ $t("settings.form.save") }}</b-button>
           </b-col>
@@ -28,7 +40,8 @@
 export default {
   data: () => ({
     locale: 'en-US',  
-    availableLocales: [ { value: 'en-US', text: 'English'}, { value: 'fr-FR', text: 'Français' } ]
+    availableLocales: [ { value: 'en-US', text: 'English'}, { value: 'fr-FR', text: 'Français' } ],
+    si_project_url: ""
   }),
   mounted () {
     this.locale = this.$root.$i18n.locale
@@ -40,6 +53,7 @@ export default {
       event.preventDefault();
       this.$root.$i18n.locale = this.locale
       window.ipcRenderer.send('setPreference', {key: 'locale', value: this.locale})
+      window.ipcRenderer.send('setPreference', {key: 'si_project_url', value: this.si_project_url})
     }
   }
 }

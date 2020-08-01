@@ -16,6 +16,12 @@
           <b-button v-on:click="deleteTask(task.id)" v-b-tooltip.hover :title="$t('tasks.removeThisTask')" variant="outline-danger" size="sm"><i class="fa fa-remove" aria-hidden="true"></i></b-button>
         </b-col>
       </b-row>
+
+      <b-row v-if="task.project_id">
+        <b-col>
+          {{ $t('tasks.project') }} <template v-if="si_project_url && getPrj(task.project_id).si_id"><a href="#" @click="openProjectUrl(getPrj(task.project_id).si_id)">{{ getPrj(task.project_id).si_id }}</a> - {{ getPrj(task.project_id).name }}</template><template v-else>{{ getPrj(task.project_id).name }}</template>
+        </b-col>
+      </b-row>
     </div>
 
     <b-collapse class="taskEdit" :id="editId" :data-task-id="task.id">
@@ -29,6 +35,8 @@
             <b-button size="sm" type="submit" variant="primary">{{ $t("tasks.form.update") }}</b-button>
           </b-col>
         </b-row>
+
+        <b-form-select v-model="edit.projectId" size="sm" :options="projectsOptions"></b-form-select>
 
         <b-form-datepicker id="manualTaskTime" size="sm" today-button :locale="$i18n.locale" value-as-date v-model="edit.taskDay" start-weekday="1"></b-form-datepicker>
 
@@ -47,6 +55,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import timeUtils from '../utils/time'
 
 export default {
@@ -56,13 +66,15 @@ export default {
       taskDescription: null,
       taskDay: null,
       taskFrom: null,
-      taskTo: null
+      taskTo: null,
+      projectId: null
     }
   }),
   props: {
     task: Object
   },
   computed: {
+    ...mapState(['si_project_url', 'projects']),
     taskDay() { return timeUtils.formatShort(this.task.started, this.$i18n.locale) },
     taskFrom() { return timeUtils.formatShort(this.task.started, this.$i18n.locale, 'HH:mm:ss') },
     taskTo() { 
@@ -73,12 +85,21 @@ export default {
     taskDuration() { return timeUtils.secondsToDdHhMmSs(this.task.duration, this.$i18n.locale) },
     editId() { return `editTask${this.task.id}` },
     fromToState() { return timeUtils.fromSupTo(this.task.started, this.task.ended) ? false : null },
+    projectsOptions() {
+      let opts = this.projects.map(p => {
+        let prjName = p.si_id ? `${p.si_id} - ${p.name}` : p.name
+        return { value: p.id, text: prjName }
+      })
+      opts.unshift({ value: null, text: this.$t("header.no_project_selected") })
+      return opts
+    }
   },
   mounted () {
     this.edit.taskDescription = this.task.title
     this.edit.taskDay = new Date(this.task.started)
     this.edit.taskFrom = this.taskFrom
     this.edit.taskTo = this.taskTo
+    this.edit.projectId = this.task.project_id
   },
   methods: {
     deleteTask: function (taskId) {
@@ -97,13 +118,20 @@ export default {
 
       let duration = timeUtils.deltaHms(this.edit.taskFrom, this.edit.taskTo)
 
-      let res = window.ipcRenderer.sendSync('updateTask', {taskId: this.task.id, start: startDate, duration: duration, title: this.edit.taskDescription})
+      let res = window.ipcRenderer.sendSync('updateTask', {taskId: this.task.id, start: startDate, duration: duration, title: this.edit.taskDescription, projectId: this.edit.projectId})
       console.log(res)
       if (res === true) {
         this.task.title = this.edit.taskDescription
         this.task.started = startDate
         this.task.duration = duration
+        this.task.project_id = this.edit.projectId
       }
+    },
+    openProjectUrl: function (si_id) {
+      window.ipcRenderer.send('openProjectSiUrl', si_id)
+    },
+    getPrj: function (id) {
+      for (let i=0; i < this.projects.length; i++) { if (this.projects[i].id === id) { return this.projects[i] }}
     }
   }
 }
