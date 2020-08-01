@@ -39,10 +39,12 @@
 
       <div id="nav">
         <b-nav tabs justified>
-          <b-nav-item :active='$route.name =="home"' :to="{ name: 'home' }">{{ $t("nav.tasks") }}</b-nav-item>
-          <b-nav-item :active='$route.name =="projects"' :to="{ name: 'projects' }">{{ $t("nav.projects") }}</b-nav-item>
-          <b-nav-item :active='$route.name =="settings"' :to="{ name: 'settings' }">{{ $t("nav.settings") }}</b-nav-item>
-          <b-nav-item :active='$route.name =="about"' :to="{ name: 'about' }">{{ $t("nav.about") }}</b-nav-item>
+          <b-nav-item v-b-tooltip.hover :title="$t('nav.tasks_help')" :active='$route.name =="home"' :to="{ name: 'home' }">{{ $t("nav.tasks") }}</b-nav-item>
+          <b-nav-item v-b-tooltip.hover :title="$t('nav.projects_help')" :active='$route.name =="projects"' :to="{ name: 'projects' }">{{ $t("nav.projects") }}</b-nav-item>
+          <b-nav-item v-b-tooltip.hover :title="$t('nav.dashboard_help')" :active='$route.name =="dashboard"' :to="{ name: 'dashboard' }"><i class="fa fa-tachometer" aria-hidden="true"></i></b-nav-item>
+          <b-nav-item v-b-tooltip.hover :title="$t('nav.reports_help')" :active='$route.name =="reports"' :to="{ name: 'reports' }"><i class="fa fa-bar-chart" aria-hidden="true"></i></b-nav-item>
+          <b-nav-item v-b-tooltip.hover :title="$t('nav.settings_help')" :active='$route.name =="settings"' :to="{ name: 'settings' }"><i class="fa fa-cogs" aria-hidden="true"></i></b-nav-item>
+          <b-nav-item v-b-tooltip.hover :title="$t('nav.about_help')" :active='$route.name =="about"' :to="{ name: 'about' }"><i class="fa fa-question-circle-o" aria-hidden="true"></i></b-nav-item>
         </b-nav>
       </div>
     </div>

@@ -30,9 +30,17 @@ export default {
     },
     nav: {
         tasks: 'Tasks',
+        tasks_help: 'Tasks',
         settings: 'Settings',
+        settings_help: 'Settings',
         about: 'About',
-        projects: 'Projects'
+        about_help: 'About',
+        projects: 'Projects',
+        projects_help: 'Projects',
+        dashboard: 'D.',
+        dashboard_help: 'Dashboard',
+        reports: 'R.',
+        reports_help: 'Reports'
     },
     tasks: {
         noDescription: 'This task has no description.',
