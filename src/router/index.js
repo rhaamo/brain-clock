@@ -4,6 +4,7 @@ import Tasks from '../views/Tasks.vue'
 import Projects from '../views/Projects.vue'
 import About from '../views/About.vue'
 import Settings from '../views/Settings.vue'
+import Dashboard from '../views/Dashboard.vue'
 
 Vue.use(VueRouter)
 
@@ -11,6 +12,7 @@ Vue.use(VueRouter)
   { path: '/', name: 'home', component: Tasks },
   { path: '/projects', name: 'projects', component: Projects },
   { path: '/settings', name: 'settings', component: Settings },
+  { path: '/dashboard', name: 'dashboard', component: Dashboard },
   { path: '/about', name: 'about', component: About }
 ]
 
