@@ -102,6 +102,7 @@ export default {
     deleteProject: function (projectId) {
       window.ipcRenderer.sendSync('deleteProject', projectId)
       this.$store.commit('loadProjects')
+      this.$store.commit('reloadTasks')
     },
     editId(id) { return `editProject${id}` },
     updateProject(id) {

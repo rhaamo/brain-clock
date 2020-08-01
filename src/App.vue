@@ -195,14 +195,17 @@ export default {
     this.$root.$i18n.locale = this.preferences.locale = window.ipcRenderer.sendSync('getPreference', {key: 'locale'})
     this.$store.commit('setSiProjectUrl', window.ipcRenderer.sendSync('getPreference', {key: 'si_project_url'}))
 
+    // Load projects in store
+    this.$store.commit('loadProjects')
+
+    // Set the current week as selected, this will also trigger a tasks refresh
     this.filter.selected = new Date()
 
-    this.$store.commit('loadProjects')
   },
   watch: {
     // Commit to the store when the selected week change
     'filter.selected': function (val, ) {
-      this.$store.commit('setSelectedTasksListWeek', val)
+      this.$store.commit('setSelectedWeekAndReloadTasks', val)
     }
   }
 }
