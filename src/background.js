@@ -261,9 +261,9 @@ ipcMain.on('getProjects', (event) => {
 })
 
 ipcMain.on('deleteProject', (event, projectId) => {
-  // TODO We need to manage the foreign keys if there is any
-  console.log('PLS FIX ME')
   knex.where('id', projectId).from('projects').delete().then(function (result) {
+    // NULL associated projects relations
+    knex('tasks').update({ project_id: null }).where({ project_id: projectId }).then()
     // returns the number of rows impacted
     event.returnValue = result === 1
   })
