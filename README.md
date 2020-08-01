@@ -15,7 +15,7 @@ Grouping by day, basic reporting, attaching a "project" to tasks, etc.
 Help welcome.
 
 ## Screenshot
-<img src="https://raw.githubusercontent.com/rhaamo/brain-clock/master/screenshot.png" width="500px"/>
+<img src="https://raw.githubusercontent.com/rhaamo/brain-clock/master/screenshot1.png" width="500px"/><img src="https://raw.githubusercontent.com/rhaamo/brain-clock/master/screenshot2.png" width="500px"/>
 
 ## Tech
 
