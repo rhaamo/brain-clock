@@ -22,7 +22,7 @@
 
     <b-row class="projects_list" align-h="center">
       <b-col class="col-11">
-        <b-list-group class="project_item" v-for="project in projects" :key="project.id">
+        <b-list-group class="project_item" v-for="(project, index) in projects" :key="project.id">
           <b-list-group-item>
             <b-row>
               <b-col cols="9">
@@ -52,7 +52,7 @@
                   <b-form-input :value="project.si_id" ref="id" sm="2" size="sm" :placeholder="$t('projects.form.si_id')"></b-form-input>
                 </b-col>
                 <b-col cols="3">
-                  <b-button size="sm" type="submit" variant="primary" @click="updateProject(project.id)">{{ $t("projects.form.save") }}</b-button>
+                  <b-button size="sm" type="submit" variant="primary" @click="updateProject(project.id, index)">{{ $t("projects.form.save") }}</b-button>
                 </b-col>
               </b-row>
             </b-collapse>
@@ -105,10 +105,9 @@ export default {
       this.$store.commit('reloadTasks')
     },
     editId(id) { return `editProject${id}` },
-    updateProject(id) {
-      console.log(this.$refs)
-      let name = this.$refs.name[1].vModelValue
-      let si_id = this.$refs.id[1].vModelValue
+    updateProject(id, index) {
+      let name = this.$refs.name[index].vModelValue
+      let si_id = this.$refs.id[index].vModelValue
       window.ipcRenderer.sendSync('updateProject', {id: id, name: name, si_id: si_id})
       this.$store.commit('loadProjects')
     }
