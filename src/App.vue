@@ -35,6 +35,7 @@
       <div id="nav">
         <b-nav tabs justified>
           <b-nav-item :active='$route.name =="home"' :to="{ name: 'home' }">{{ $t("nav.tasks") }}</b-nav-item>
+          <b-nav-item :active='$route.name =="projects"' :to="{ name: 'projects' }">{{ $t("nav.projects") }}</b-nav-item>
           <b-nav-item :active='$route.name =="settings"' :to="{ name: 'settings' }">{{ $t("nav.settings") }}</b-nav-item>
           <b-nav-item :active='$route.name =="about"' :to="{ name: 'about' }">{{ $t("nav.about") }}</b-nav-item>
         </b-nav>

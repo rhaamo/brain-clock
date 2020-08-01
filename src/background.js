@@ -237,3 +237,7 @@ ipcMain.on('updateTask', (event, {taskId, start, end, duration, title}) => {
     event.returnValue = result === 1
   })
 })
+
+ipcMain.on('getProjects', (event) => {
+  event.returnValue = []
+})

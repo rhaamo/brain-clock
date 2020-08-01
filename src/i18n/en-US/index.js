@@ -29,7 +29,8 @@ export default {
     nav: {
         tasks: 'Tasks',
         settings: 'Settings',
-        about: 'About'
+        about: 'About',
+        projects: 'Projects'
     },
     tasks: {
         noDescription: 'This task has no description.',
