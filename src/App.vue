@@ -49,7 +49,9 @@
       </div>
     </div>
 
-    <router-view/>
+    <main>
+      <router-view/>
+    </main>
 
     <b-row class="weekSelector fixed-bottom" align-v="baseline">
       <b-col col lg="1" align="right">
