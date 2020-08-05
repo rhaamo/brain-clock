@@ -194,6 +194,10 @@ export default {
       clearInterval(this.timerInterval)
     });
 
+    window.ipcRenderer.on('taskAdded', () => {
+      this.$store.commit('reloadTasks')
+    })
+
     // Get various preferences
     this.$root.$i18n.locale = window.ipcRenderer.sendSync('getPreference', {key: 'locale', dflt: 'en-US'})
     this.$store.commit('setSiProjectUrl', window.ipcRenderer.sendSync('getPreference', {key: 'si_project_url'}))
